@@ -8,6 +8,9 @@
 	  mc:Ignorable="d">
 
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+		<canvas:CanvasControl Name="Canvas"
+							  VerticalAlignment="Stretch"
+							  HorizontalAlignment="Stretch"
+							  Draw="Canvas_OnDraw" />
 	</Grid>
 </Page>
