@@ -20,17 +20,17 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using static ZTI_Project_Client.Constants;
+using static ZTI.Project.Client.Constants;
 
-namespace ZTI_Project_Client {
+namespace ZTI.Project.Client {
 	public sealed partial class MainPage : Page {
 		public MainPage() {
 			InitializeComponent();
 			Stops = new List<Stop>();
 
 			WebRequest request;
-			WebResponse response;
-			for ( int i = 0 ; i < 11 ; ++i ) {
+			WebResponse response = null;
+			for ( int i = 0 ; i < 11 ; ++i ) { 
 				request = WebRequest.Create("http://localhost:9081/ZTI-Project/Stops");
 				try {
 					response = request.GetResponseAsync().Result;
@@ -42,7 +42,7 @@ namespace ZTI_Project_Client {
 				}
 			}
 
-			using ( StreamReader reader = new StreamReader(response.GetResponseStream()) ) {
+			using ( StreamReader reader = new StreamReader(response?.GetResponseStream()) ) {
 				XmlSerializer deserializer = new XmlSerializer(typeof(List<Stop>),
 				                                               new XmlRootAttribute(ROOT));
 				Stops = (List<Stop>)deserializer.Deserialize(reader);

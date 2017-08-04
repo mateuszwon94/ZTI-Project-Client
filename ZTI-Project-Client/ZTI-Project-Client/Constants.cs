@@ -1,4 +1,4 @@
-﻿namespace ZTI_Project_Client {
+﻿namespace ZTI.Project.Client {
 	public static class Constants {
 		public const string ROOT = "stops";
 		public const string STOP = "stop";

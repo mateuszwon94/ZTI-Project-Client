@@ -7,7 +7,7 @@
     <ProjectGuid>{1980E18C-798C-4464-BE5C-D306B78BCB6A}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ZTI_Project_Client</RootNamespace>
+    <RootNamespace>ZTI.Project.Client</RootNamespace>
     <AssemblyName>ZTI-Project-Client</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>

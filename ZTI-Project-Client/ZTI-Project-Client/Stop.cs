@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
-using static ZTI_Project_Client.Constants;
+using static ZTI.Project.Client.Constants;
 
-namespace ZTI_Project_Client {
+namespace ZTI.Project.Client {
 	[Serializable, XmlType(TypeName = STOP)]
 	public class Stop {
 
