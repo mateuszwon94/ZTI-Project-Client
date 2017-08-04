@@ -30,7 +30,7 @@ namespace ZTI_Project_Client {
 
 			WebRequest request;
 			WebResponse response;
-			while ( true ) {
+			for ( int i = 0 ; i < 11 ; ++i ) {
 				request = WebRequest.Create("http://localhost:9081/ZTI-Project/Stops");
 				try {
 					response = request.GetResponseAsync().Result;
@@ -38,9 +38,10 @@ namespace ZTI_Project_Client {
 				} catch ( Exception ex )
 					when ( ex is WebException ||
 					       ex.InnerException is WebException ) {
+					if ( i == 10 ) throw;
 				}
 			}
-			
+
 			using ( StreamReader reader = new StreamReader(response.GetResponseStream()) ) {
 				XmlSerializer deserializer = new XmlSerializer(typeof(List<Stop>),
 				                                               new XmlRootAttribute(ROOT));
