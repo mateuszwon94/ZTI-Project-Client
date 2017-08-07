@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using MetroLog;
+using MetroLog.Targets;
 
 namespace ZTI.Project.Client {
 	/// <summary>
@@ -27,6 +29,12 @@ namespace ZTI.Project.Client {
 		public App() {
 			this.InitializeComponent();
 			this.Suspending += OnSuspending;
+
+#if DEBUG
+			LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+#else
+			LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Error, LogLevel.Fatal, new FileStreamingTarget());
+#endif
 		}
 
 		/// <summary>
@@ -86,5 +94,7 @@ namespace ZTI.Project.Client {
 			//TODO: Save application state and stop any background activity
 			deferral.Complete();
 		}
+
+		internal static ILogger Log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
 	}
 }
