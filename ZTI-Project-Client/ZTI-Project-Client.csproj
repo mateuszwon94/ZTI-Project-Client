@@ -104,8 +104,8 @@
     <Compile Include="MenuPage.xaml.cs">
       <DependentUpon>MenuPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="StopsPage.xaml.cs">
-      <DependentUpon>StopsPage.xaml</DependentUpon>
+    <Compile Include="RouteSearchPage.xaml.cs">
+      <DependentUpon>RouteSearchPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stop.cs" />
@@ -139,7 +139,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="StopsPage.xaml">
+    <Page Include="RouteSearchPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

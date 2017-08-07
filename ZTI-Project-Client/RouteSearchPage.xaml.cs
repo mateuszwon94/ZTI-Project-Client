@@ -24,13 +24,10 @@ using MetroLog;
 using static ZTI.Project.Client.Constants;
 
 namespace ZTI.Project.Client {
-	public sealed partial class StopsPage : Page {
-		public StopsPage() {
+	public sealed partial class RouteSearchPage : Page {
+		public RouteSearchPage() {
 			InitializeComponent();
 			GetStopsFromServer("http://localhost:9081/ZTI-Project/Stops");
-			
-			LoadingIndicator.Visibility = Visibility.Collapsed;
-			MapCanvas.Visibility = Visibility.Visible;
 		}
 
 		private async void GetStopsFromServer(string url) {
@@ -54,6 +51,9 @@ namespace ZTI.Project.Client {
 				                                               new XmlRootAttribute(ROOT));
 				Stops = (List<Stop>)deserializer.Deserialize(reader);
 			}
+
+			LoadingIndicator.Visibility = Visibility.Collapsed;
+			MapCanvas.Visibility = Visibility.Visible;
 		}
 
 		public List<Stop> Stops;

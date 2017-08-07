@@ -29,7 +29,7 @@ namespace ZTI.Project.Client {
 			if ( HamburgerSplitView.IsPaneOpen ) HamburgerSplitView.IsPaneOpen = false;
 
 			if ( SearchListBoxItem.IsSelected ) {
-				MainFrame.Navigate(typeof(StopsPage));
+				MainFrame.Navigate(typeof(RouteSearchPage));
 			} else if ( CreditsListBoxItem.IsSelected ) {
 				MainFrame.Navigate(typeof(CreditsPage));
 			} else {
