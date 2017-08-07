@@ -27,13 +27,24 @@ namespace ZTI.Project.Client {
 	public sealed partial class StopsPage : Page {
 		public StopsPage() {
 			InitializeComponent();
+			LoadingIndicator.IsEnabled = true;
+			LoadingIndicator.IsActive = true;
+
+			GetStopsFromServer("http://localhost:9081/ZTI-Project/Stops");
+
+			LoadingIndicator.IsActive = false;
+			LoadingIndicator.IsEnabled = false;
+			MapCanvas.IsEnabled = true;
+		}
+
+		private async void GetStopsFromServer(string url) {
 			Stops = new List<Stop>();
 
 			WebResponse response = null;
 			for ( int i = 0 ; i < 11 ; ++i ) {
-				WebRequest request = WebRequest.Create("http://localhost:9081/ZTI-Project/Stops");
+				WebRequest request = WebRequest.Create(url);
 				try {
-					response = request.GetResponseAsync().Result;
+					response = await request.GetResponseAsync();
 					break;
 				} catch ( Exception ex )
 					when ( ex is WebException ||
@@ -47,27 +58,26 @@ namespace ZTI.Project.Client {
 				                                               new XmlRootAttribute(ROOT));
 				Stops = (List<Stop>)deserializer.Deserialize(reader);
 			}
-
 		}
 
 		public List<Stop> Stops;
 
-		private void Canvas_OnDraw(CanvasControl sender, CanvasDrawEventArgs args) {
+		private void MapCanvas_OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args) {
+			float mul = 5f, add = 50f;
 			foreach ( Stop stop in Stops ) {
-				foreach ( Stop conectedStop in stop.ConnectedStops(Stops)) {
-					args.DrawingSession.DrawLine(stop.X * 5f, stop.Y * 5f,
-					                             conectedStop.X * 5f, conectedStop.Y * 5f,
-												 Colors.Black);
+				foreach ( Stop conectedStop in stop.ConnectedStops(Stops) ) {
+					args.DrawingSession.DrawLine(add + stop.X * mul, stop.Y * mul,
+					                             add + conectedStop.X * 5f, conectedStop.Y * 5f,
+					                             Colors.Black);
 				}
-				
-				args.DrawingSession.FillCircle(stop.X * 5f, stop.Y * 5f, 3f,
+
+				args.DrawingSession.FillCircle(add + stop.X * mul, stop.Y * mul, 3f,
 				                               stop.NZ ? Colors.DimGray : Colors.Black);
 				args.DrawingSession.DrawText(stop.Name,
-				                             stop.X * 5f - 50f, stop.Y * 5f + 5f,
+				                             add + stop.X * mul - 30f, stop.Y * mul + 5f,
 				                             stop.NZ ? Colors.DimGray : Colors.Black,
 				                             new CanvasTextFormat {
-					                             FontSize = 15,
-					                             FontFamily = "Times New Roman"
+					                             FontSize = 15
 				                             });
 			}
 		}
