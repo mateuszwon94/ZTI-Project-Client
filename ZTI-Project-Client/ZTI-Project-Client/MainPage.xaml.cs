@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using MetroLog;
 using static ZTI.Project.Client.Constants;
 
 namespace ZTI.Project.Client {
@@ -28,10 +29,9 @@ namespace ZTI.Project.Client {
 			InitializeComponent();
 			Stops = new List<Stop>();
 
-			WebRequest request;
 			WebResponse response = null;
-			for ( int i = 0 ; i < 11 ; ++i ) { 
-				request = WebRequest.Create("http://localhost:9081/ZTI-Project/Stops");
+			for ( int i = 0 ; i < 11 ; ++i ) {
+				WebRequest request = WebRequest.Create("http://localhost:9081/ZTI-Project/Stops");
 				try {
 					response = request.GetResponseAsync().Result;
 					break;
@@ -54,12 +54,18 @@ namespace ZTI.Project.Client {
 
 		private void Canvas_OnDraw(CanvasControl sender, CanvasDrawEventArgs args) {
 			foreach ( Stop stop in Stops ) {
-				args.DrawingSession.FillCircle(stop.X * 5, stop.Y * 5, 3f,
+				foreach ( Stop conectedStop in stop.ConnectedStops(Stops)) {
+					args.DrawingSession.DrawLine(stop.X * 5f, stop.Y * 5f,
+					                             conectedStop.X * 5f, conectedStop.Y * 5f,
+												 Colors.Black);
+				}
+				
+				args.DrawingSession.FillCircle(stop.X * 5f, stop.Y * 5f, 3f,
 				                               stop.NZ ? Colors.DimGray : Colors.Black);
 				args.DrawingSession.DrawText(stop.Name,
-				                             stop.X * 5 - 15, stop.Y * 5,
+				                             stop.X * 5f - 50f, stop.Y * 5f + 5f,
 				                             stop.NZ ? Colors.DimGray : Colors.Black,
-				                             new CanvasTextFormat() {
+				                             new CanvasTextFormat {
 					                             FontSize = 15,
 					                             FontFamily = "Times New Roman"
 				                             });
