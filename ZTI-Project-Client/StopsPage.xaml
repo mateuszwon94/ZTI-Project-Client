@@ -8,13 +8,13 @@
       mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <canvas:CanvasAnimatedControl Name="MapCanvas"
+        <canvas:CanvasAnimatedControl x:Name="MapCanvas"
                                       VerticalAlignment="Stretch"
                                       HorizontalAlignment="Stretch"
                                       Draw="MapCanvas_OnDraw"
-                                      IsEnabled="False"
-                                      Background="Aqua" />
+                                      Visibility="Collapsed"/>
         <ProgressRing Name="LoadingIndicator"
+                      IsActive="true"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Center" />
     </Grid>

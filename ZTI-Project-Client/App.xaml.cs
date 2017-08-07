@@ -27,8 +27,8 @@ namespace ZTI.Project.Client {
 		/// executed, and as such is the logical equivalent of main() or WinMain().
 		/// </summary>
 		public App() {
-			this.InitializeComponent();
-			this.Suspending += OnSuspending;
+			InitializeComponent();
+			Suspending += OnSuspending;
 
 #if DEBUG
 			LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());

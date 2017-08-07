@@ -27,14 +27,10 @@ namespace ZTI.Project.Client {
 	public sealed partial class StopsPage : Page {
 		public StopsPage() {
 			InitializeComponent();
-			LoadingIndicator.IsEnabled = true;
-			LoadingIndicator.IsActive = true;
-
 			GetStopsFromServer("http://localhost:9081/ZTI-Project/Stops");
-
-			LoadingIndicator.IsActive = false;
-			LoadingIndicator.IsEnabled = false;
-			MapCanvas.IsEnabled = true;
+			
+			LoadingIndicator.Visibility = Visibility.Collapsed;
+			MapCanvas.Visibility = Visibility.Visible;
 		}
 
 		private async void GetStopsFromServer(string url) {
