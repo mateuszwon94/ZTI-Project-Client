@@ -19,22 +19,7 @@ namespace ZTI.Project.Client {
 	/// <summary>
 	/// Pusta strona, która może być używana samodzielnie lub do której można nawigować wewnątrz ramki.
 	/// </summary>
-	public sealed partial class MenuPage : Page {
-		public MenuPage() { InitializeComponent(); }
-
-		private void HamburgerButton_OnClick(object sender, RoutedEventArgs e) =>
-			HamburgerSplitView.IsPaneOpen = !HamburgerSplitView.IsPaneOpen;
-
-		private void HamburgerListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e) {
-			if ( HamburgerSplitView.IsPaneOpen ) HamburgerSplitView.IsPaneOpen = false;
-
-			if ( SearchListBoxItem.IsSelected ) {
-				MainFrame.Navigate(typeof(StopsPage));
-			} else if ( CreditsListBoxItem.IsSelected ) {
-				MainFrame.Navigate(typeof(CreditsPage));
-			} else {
-				MainFrame.Navigate(typeof(Page));
-			}
-		}
+	public sealed partial class CreditsPage : Page {
+		public CreditsPage() => InitializeComponent();
 	}
 }

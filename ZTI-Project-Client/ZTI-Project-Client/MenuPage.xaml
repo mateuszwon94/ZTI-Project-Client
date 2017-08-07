@@ -38,30 +38,30 @@
                     <ListBox Name="HamburgerListBox"
                              SelectionMode="Single"
                              SelectionChanged="HamburgerListBox_OnSelectionChanged">
-                        <ListBoxItem Name="PlayListBoxItem">
+                        <ListBoxItem Name="SearchListBoxItem">
                             <RelativePanel>
-                                <TextBlock Name="PlayIconTextBlock"
+                                <TextBlock Name="SearchIconTextBlock"
                                            FontFamily="{StaticResource SegoeFont}"
                                            FontSize="30"
                                            Text="&#xE7C0;"
                                            RelativePanel.AlignLeftWithPanel="True" />
                                 <TextBlock FontSize="25"
                                            Text="Szykaj połączenia"
-                                           RelativePanel.RightOf="PlayIconTextBlock"
+                                           RelativePanel.RightOf="SearchIconTextBlock"
                                            RelativePanel.AlignVerticalCenterWithPanel="True"
                                            Margin="20,0,0,0" />
                             </RelativePanel>
                         </ListBoxItem>
-                        <ListBoxItem Name="SettingsListBoxItem">
+                        <ListBoxItem Name="StopListBoxItem">
                             <RelativePanel>
-                                <TextBlock Name="SettingsIconTextBlock"
+                                <TextBlock Name="StopIconTextBlock"
                                            FontFamily="{StaticResource SegoeFont}"
                                            FontSize="30"
                                            Text="&#xE707;"
                                            RelativePanel.AlignLeftWithPanel="True" />
                                 <TextBlock FontSize="25"
                                            Text="Rozkład przystanku"
-                                           RelativePanel.RightOf="SettingsIconTextBlock"
+                                           RelativePanel.RightOf="StopIconTextBlock"
                                            RelativePanel.AlignVerticalCenterWithPanel="True"
                                            Margin="20,0,0,0" />
                             </RelativePanel>
