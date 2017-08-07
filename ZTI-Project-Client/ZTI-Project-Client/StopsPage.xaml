@@ -1,4 +1,4 @@
-﻿<Page x:Class="ZTI.Project.Client.MainPage"
+﻿<Page x:Class="ZTI.Project.Client.StopsPage"
 	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:ZTI.Project.Client"

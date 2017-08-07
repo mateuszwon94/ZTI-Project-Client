@@ -24,8 +24,8 @@ using MetroLog;
 using static ZTI.Project.Client.Constants;
 
 namespace ZTI.Project.Client {
-	public sealed partial class MainPage : Page {
-		public MainPage() {
+	public sealed partial class StopsPage : Page {
+		public StopsPage() {
 			InitializeComponent();
 			Stops = new List<Stop>();
 
