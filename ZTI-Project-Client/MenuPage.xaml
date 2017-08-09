@@ -46,7 +46,7 @@
                                            Text="&#xE7C0;"
                                            RelativePanel.AlignLeftWithPanel="True" />
                                 <TextBlock FontSize="25"
-                                           Text="Szykaj połączenia"
+                                           Text="Szukaj połączenia"
                                            RelativePanel.RightOf="SearchIconTextBlock"
                                            RelativePanel.AlignVerticalCenterWithPanel="True"
                                            Margin="20,0,0,0" />

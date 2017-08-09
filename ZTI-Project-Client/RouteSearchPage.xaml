@@ -15,11 +15,54 @@
                                       Width="900"
                                       Height="600"
                                       Visibility="Collapsed"
-                                      RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                      RelativePanel.AlignRightWithPanel="True"
                                       RelativePanel.AlignVerticalCenterWithPanel="True" />
+
         <ProgressRing Name="LoadingIndicator"
                       IsActive="true"
                       RelativePanel.AlignHorizontalCenterWith="MapCanvas"
                       RelativePanel.AlignVerticalCenterWith="MapCanvas" />
+
+        <AutoSuggestBox Name="FromStopSearchBox"
+                        PlaceholderText="Przystanek poczatkowy"
+                        Margin="10,10,0,0"
+                        QueryIcon="Map"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignTopWithPanel="True"
+                        MinWidth="200"
+                        MaxWidth="200"
+                        GotFocus="StopSearchBox_OnGotFocus"
+                        TextChanged="StopSearchBox_TextChanged"
+                        QuerySubmitted="StopSearchBox_QuerySubmitted"
+                        SuggestionChosen="StopSearchBox_SuggestionChosen" />
+
+        <AutoSuggestBox Name="ToStopSearchBox"
+                        PlaceholderText="Przystanek koncowy"
+                        Margin="5,10,0,0"
+                        QueryIcon="Map"
+                        RelativePanel.RightOf="FromStopSearchBox"
+                        RelativePanel.AlignTopWith="FromStopSearchBox"
+                        MinWidth="200"
+                        MaxWidth="200"
+                        GotFocus="StopSearchBox_OnGotFocus"
+                        TextChanged="StopSearchBox_TextChanged"
+                        QuerySubmitted="StopSearchBox_QuerySubmitted"
+                        SuggestionChosen="StopSearchBox_SuggestionChosen" />
+
+        <Button Name="SearchButton"
+                Margin="5,10,0,0"
+                RelativePanel.RightOf="ToStopSearchBox"
+                RelativePanel.AlignTopWith="ToStopSearchBox"
+                MinWidth="200"
+                MaxWidth="200" 
+                Click="SearchButton_OnClick">
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
+                <TextBlock Text="Szykaj polaczenia" />
+                <SymbolIcon Symbol="Find"
+                            Margin="5,0,0,0" />
+            </StackPanel>
+        </Button>
     </RelativePanel>
 </Page>
