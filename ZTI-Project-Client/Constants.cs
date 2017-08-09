@@ -9,5 +9,14 @@
 		public const string LOC_Y = "loc_y";
 		public const string CONNS = "conns";
 		public const string CONN  = "conn";
+
+		public static class Url {
+#if DEBUG
+			public const string APP = "http://localhost:9081/ZTI-Project";
+#else
+			public const string APP = "http://IBM-Bluemix-site/ZTI-Project";
+#endif
+			public const string STOPS = "/Stops";
+		}
 	}
 }

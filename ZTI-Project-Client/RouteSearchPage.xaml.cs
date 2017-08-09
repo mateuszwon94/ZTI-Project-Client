@@ -27,7 +27,7 @@ namespace ZTI.Project.Client {
 	public sealed partial class RouteSearchPage : Page {
 		public RouteSearchPage() {
 			InitializeComponent();
-			GetStopsFromServer("http://localhost:9081/ZTI-Project/Stops");
+			GetStopsFromServer(Url.APP + Url.STOPS);
 		}
 
 		private async void GetStopsFromServer(string url) {
