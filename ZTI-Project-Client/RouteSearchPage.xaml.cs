@@ -31,6 +31,9 @@ namespace ZTI.Project.Client {
 	public sealed partial class RouteSearchPage : Page {
 		public RouteSearchPage() {
 			InitializeComponent();
+			SearhTimePicker.Time = DateTime.Now.TimeOfDay;
+			LoadingIndicator.Visibility = Visibility.Visible;
+			LoadingIndicator.IsActive = true;
 			GetStopsFromServer(Url.APP + Url.STOPS);
 		}
 
@@ -63,24 +66,29 @@ namespace ZTI.Project.Client {
 
 		private void MapCanvas_OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args) {
 			const float mul = 5f;
-			const float add = 50f;
+			const float add = 25f;
 
 			args.DrawingSession.Clear(Colors.White);
 			foreach ( Stop stop in Stops ) {
-				foreach ( Stop conectedStop in stop.ConnectedStops(Stops) ) 
+				foreach ( Stop conectedStop in stop.ConnectedStops(Stops) )
 					args.DrawingSession.DrawLine(add + stop.X * mul, stop.Y * mul,
-					                             add + conectedStop.X * 5f, conectedStop.Y * 5f,
+					                             add + conectedStop.X * mul, conectedStop.Y * mul,
 					                             Colors.Black);
 
 				args.DrawingSession.FillCircle(add + stop.X * mul, stop.Y * mul, 3f,
 				                               stop.NZ ? Colors.DimGray : Colors.Black);
-				if ( From == stop ) 
+				if ( From == stop )
 					args.DrawingSession.DrawCircle(add + stop.X * mul, stop.Y * mul, 10f,
 					                               Colors.Blue);
-				if ( To == stop )
+				else if ( To == stop )
 					args.DrawingSession.DrawCircle(add + stop.X * mul, stop.Y * mul, 10f,
 					                               Colors.Red);
-				args.DrawingSession.DrawText(stop.Name,
+				args.DrawingSession.DrawText(
+#if DEBUG
+				                             $"{stop.Name}\n({stop.ID})",
+#else
+											 stop.Name,
+#endif
 				                             add + stop.X * mul - 30f, stop.Y * mul + 5f,
 				                             stop.NZ ? Colors.DimGray : Colors.Black,
 				                             new CanvasTextFormat {
@@ -91,7 +99,7 @@ namespace ZTI.Project.Client {
 			if ( Route != null ) {
 				for ( int i = 0 ; i < Route.Count -1 ; ++i ) {
 					args.DrawingSession.DrawLine(add + Route[i].X * mul, Route[i].Y * mul,
-					                             add + Route[i+1].X * 5f, Route[i+1].Y * 5f,
+					                             add + Route[i+1].X * mul, Route[i+1].Y * mul,
 					                             Colors.LightGreen);
 					args.DrawingSession.FillCircle(add + Route[i].X * mul, Route[i].Y * mul, 5f,
 					                               Colors.Green);

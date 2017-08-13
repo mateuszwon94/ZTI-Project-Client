@@ -7,62 +7,106 @@
       xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
       mc:Ignorable="d">
 
-    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <canvas:CanvasAnimatedControl Name="MapCanvas"
-                                      VerticalAlignment="Stretch"
-                                      HorizontalAlignment="Stretch"
-                                      Draw="MapCanvas_OnDraw"
-                                      Width="900"
-                                      Height="600"
-                                      Visibility="Collapsed"
-                                      RelativePanel.AlignRightWithPanel="True"
-                                      RelativePanel.AlignVerticalCenterWithPanel="True" />
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <ProgressRing Name="LoadingIndicator"
-                      IsActive="true"
-                      RelativePanel.AlignHorizontalCenterWith="MapCanvas"
-                      RelativePanel.AlignVerticalCenterWith="MapCanvas" />
+        <ScrollViewer Grid.Column="1"
+                      HorizontalScrollMode="Enabled"
+                      HorizontalScrollBarVisibility="Visible"
+                      VerticalScrollMode="Enabled"
+                      VerticalScrollBarVisibility="Visible">
+            <RelativePanel>
+                <canvas:CanvasAnimatedControl Name="MapCanvas"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Center"
+                                              Draw="MapCanvas_OnDraw"
+                                              Width="850"
+                                              Height="600"
+                                              Visibility="Collapsed"
+                                              RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                              RelativePanel.AlignVerticalCenterWithPanel="True" />
 
-        <AutoSuggestBox Name="FromStopSearchBox"
-                        PlaceholderText="Przystanek poczatkowy"
-                        Margin="10,10,0,0"
-                        QueryIcon="Map"
-                        RelativePanel.AlignLeftWithPanel="True"
-                        RelativePanel.AlignTopWithPanel="True"
+                <ProgressRing Name="LoadingIndicator"
+                              IsActive="true"
+                              RelativePanel.AlignHorizontalCenterWithPanel="True"
+                              RelativePanel.AlignVerticalCenterWithPanel="True" />
+            </RelativePanel>
+        </ScrollViewer>
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Margin="10,10,10,0"
+                  Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <AutoSuggestBox Name="FromStopSearchBox"
+                                PlaceholderText="Przystanek poczatkowy"
+                                QueryIcon="Map"
+                                RelativePanel.AlignLeftWithPanel="True"
+                                RelativePanel.AlignTopWithPanel="True"
+                                MinWidth="200"
+                                MaxWidth="200"
+                                GotFocus="StopSearchBox_OnGotFocus"
+                                TextChanged="StopSearchBox_TextChanged"
+                                QuerySubmitted="StopSearchBox_QuerySubmitted"
+                                SuggestionChosen="StopSearchBox_SuggestionChosen"
+                                Grid.Row="0"
+                                Grid.Column="0" />
+
+                <AutoSuggestBox Name="ToStopSearchBox"
+                                PlaceholderText="Przystanek koncowy"
+                                Margin="5,0,0,0"
+                                QueryIcon="Map"
+                                RelativePanel.RightOf="FromStopSearchBox"
+                                RelativePanel.AlignTopWith="FromStopSearchBox"
+                                MinWidth="200"
+                                MaxWidth="200"
+                                GotFocus="StopSearchBox_OnGotFocus"
+                                TextChanged="StopSearchBox_TextChanged"
+                                QuerySubmitted="StopSearchBox_QuerySubmitted"
+                                SuggestionChosen="StopSearchBox_SuggestionChosen"
+                                Grid.Row="0"
+                                Grid.Column="1" />
+
+                <TimePicker Name="SearhTimePicker"
+                            Margin="0,5,0,0"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            MinWidth="200"
+                            MaxWidth="200"
+                            ClockIdentifier="24HourClock" />
+
+                <Button Name="SearchButton"
+                        Margin="5,5,0,0"
+                        RelativePanel.RightOf="ToStopSearchBox"
+                        RelativePanel.AlignTopWith="ToStopSearchBox"
                         MinWidth="200"
                         MaxWidth="200"
-                        GotFocus="StopSearchBox_OnGotFocus"
-                        TextChanged="StopSearchBox_TextChanged"
-                        QuerySubmitted="StopSearchBox_QuerySubmitted"
-                        SuggestionChosen="StopSearchBox_SuggestionChosen" />
-
-        <AutoSuggestBox Name="ToStopSearchBox"
-                        PlaceholderText="Przystanek koncowy"
-                        Margin="5,10,0,0"
-                        QueryIcon="Map"
-                        RelativePanel.RightOf="FromStopSearchBox"
-                        RelativePanel.AlignTopWith="FromStopSearchBox"
-                        MinWidth="200"
-                        MaxWidth="200"
-                        GotFocus="StopSearchBox_OnGotFocus"
-                        TextChanged="StopSearchBox_TextChanged"
-                        QuerySubmitted="StopSearchBox_QuerySubmitted"
-                        SuggestionChosen="StopSearchBox_SuggestionChosen" />
-
-        <Button Name="SearchButton"
-                Margin="5,10,0,0"
-                RelativePanel.RightOf="ToStopSearchBox"
-                RelativePanel.AlignTopWith="ToStopSearchBox"
-                MinWidth="200"
-                MaxWidth="200" 
-                Click="SearchButton_OnClick">
-            <StackPanel Orientation="Horizontal"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center">
-                <TextBlock Text="Szykaj polaczenia" />
-                <SymbolIcon Symbol="Find"
-                            Margin="5,0,0,0" />
-            </StackPanel>
-        </Button>
-    </RelativePanel>
+                        Click="SearchButton_OnClick"
+                        Grid.Row="1"
+                        Grid.Column="1">
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+                        <TextBlock Text="Szykaj polaczenia" />
+                        <SymbolIcon Symbol="Find"
+                                    Margin="5,0,0,0" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Grid>
+    </Grid>
 </Page>
