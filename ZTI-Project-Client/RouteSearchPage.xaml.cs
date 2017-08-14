@@ -24,8 +24,9 @@ using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using MetroLog;
-using static System.String;
+using ZTI.Project.Client.Data;
 using static ZTI.Project.Client.Constants;
+using static ZTI.Project.Client.Utils;
 
 namespace ZTI.Project.Client {
 	public sealed partial class RouteSearchPage : Page {
@@ -34,30 +35,23 @@ namespace ZTI.Project.Client {
 			SearhTimePicker.Time = DateTime.Now.TimeOfDay;
 			LoadingIndicator.Visibility = Visibility.Visible;
 			LoadingIndicator.IsActive = true;
-			GetStopsFromServer(Url.APP + Url.STOPS);
-		}
+			GetStops();
 
-		private async void GetStopsFromServer(string url) {
-			Stops = new List<Stop>();
-
-			for ( int i = 0 ; i < 11 ; ++i ) {
-				try {
-					using ( Stream response = await Http.Client.GetStreamAsync(url) ) {
-						XmlSerializer deserializer = new XmlSerializer(typeof(List<Stop>),
-						                                               new XmlRootAttribute(ROOT));
-						Stops = (List<Stop>)deserializer.Deserialize(response);
-					}
-					break;
-				} catch ( Exception ex )
-					when ( ex is HttpRequestException ||
-					       ex.InnerException is HttpRequestException ) {
-					if ( i == 10 ) return;
+			DispatcherTimer timer = new DispatcherTimer {
+				Interval = TimeSpan.FromMilliseconds(100)
+			};
+			timer.Tick += (sender, e) => {
+				if ( Stops != null ) {
+					LoadingIndicator.Visibility = Visibility.Collapsed;
+					MapCanvas.Visibility = Visibility.Visible;
+					if ( sender is DispatcherTimer t ) 
+						t.Stop();
 				}
-			}
-
-			LoadingIndicator.Visibility = Visibility.Collapsed;
-			MapCanvas.Visibility = Visibility.Visible;
+			};
+			timer.Start();
 		}
+
+		private async void GetStops() => Stops = await GetListOfDataFromServer<Stop>(Url.APP + Url.STOPS);
 
 		public List<Stop> Stops;
 		public Stop From { get; private set; }
@@ -69,6 +63,7 @@ namespace ZTI.Project.Client {
 			const float add = 25f;
 
 			args.DrawingSession.Clear(Colors.White);
+
 			foreach ( Stop stop in Stops ) {
 				foreach ( Stop conectedStop in stop.ConnectedStops(Stops) )
 					args.DrawingSession.DrawLine(add + stop.X * mul, stop.Y * mul,
@@ -85,9 +80,9 @@ namespace ZTI.Project.Client {
 					                               Colors.Red);
 				args.DrawingSession.DrawText(
 #if DEBUG
-				                             $"{stop.Name}\n({stop.ID})",
+				                             $"{stop}\n({stop.ID})",
 #else
-											 stop.Name,
+											 stop,
 #endif
 				                             add + stop.X * mul - 30f, stop.Y * mul + 5f,
 				                             stop.NZ ? Colors.DimGray : Colors.Black,
@@ -126,11 +121,11 @@ namespace ZTI.Project.Client {
 		private void StopSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
 			try {
 				if ( sender == FromStopSearchBox ) {
-					From = Stops.First(stop => string.Equals(stop.Name, args.QueryText, StringComparison.CurrentCultureIgnoreCase));
-					sender.Text = From.Name;
+					From = Stops?.First(stop => string.Equals(stop.Name, args.QueryText, StringComparison.CurrentCultureIgnoreCase));
+					if ( From != null ) sender.Text = From?.Name;
 				} else if ( sender == ToStopSearchBox ) {
-					To = Stops.First(stop => string.Equals(stop.Name, args.QueryText, StringComparison.CurrentCultureIgnoreCase));
-					sender.Text = To.Name;
+					To = Stops?.First(stop => string.Equals(stop.Name, args.QueryText, StringComparison.CurrentCultureIgnoreCase));
+					if ( To != null ) sender.Text = To.Name;
 				}
 			} catch ( InvalidOperationException ) {
 				return;
@@ -139,9 +134,18 @@ namespace ZTI.Project.Client {
 
 		private void StopSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args) {
 			if ( sender == FromStopSearchBox )
-				From = Stops.First(stop => stop.Name == (string)args.SelectedItem);
+				From = Stops?.First(stop => stop.Name == (string)args.SelectedItem);
 			else if ( sender == ToStopSearchBox )
-				To = Stops.First(stop => stop.Name == (string)args.SelectedItem);
+				To = Stops?.First(stop => stop.Name == (string)args.SelectedItem);
+		}
+
+		private void StopSearchBox_OnGotFocus(object sender, RoutedEventArgs e) {
+			if ( sender is AutoSuggestBox searchBox ) {
+				searchBox.ItemsSource = Stops?.Select(stop => stop.Name)
+				                             .OrderBy(stopName => stopName)
+				                             .Where(stopName => stopName.ToLower().StartsWith(searchBox.Text.Trim().ToLower()) ||
+				                                                stopName.ToLower().Contains(searchBox.Text.Trim().ToLower()));
+			}
 		}
 
 		private async void SearchButton_OnClick(object sender, RoutedEventArgs e) {
@@ -159,15 +163,6 @@ namespace ZTI.Project.Client {
 				Route = new Route(response, Stops);
 				From = Route[0];
 				To = Route[Route.Count - 1];
-			}
-		}
-
-		private void StopSearchBox_OnGotFocus(object sender, RoutedEventArgs e) {
-			if ( sender is AutoSuggestBox searchBox ) {
-				searchBox.ItemsSource = Stops.Select(stop => stop.Name)
-				                             .OrderBy(stopName => stopName)
-				                             .Where(stopName => stopName.ToLower().StartsWith(searchBox.Text.Trim().ToLower()) ||
-				                                                stopName.ToLower().Contains(searchBox.Text.Trim().ToLower()));
 			}
 		}
 	}
