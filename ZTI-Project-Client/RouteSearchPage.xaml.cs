@@ -121,10 +121,10 @@ namespace ZTI.Project.Client {
 		private void StopSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
 			try {
 				if ( sender == FromStopSearchBox ) {
-					From = Stops?.First(stop => string.Equals(stop.Name, args.QueryText, StringComparison.CurrentCultureIgnoreCase));
+					From = Stops?.First(stop => stop.Name.StartsWith(args.QueryText, StringComparison.CurrentCultureIgnoreCase));
 					if ( From != null ) sender.Text = From?.Name;
 				} else if ( sender == ToStopSearchBox ) {
-					To = Stops?.First(stop => string.Equals(stop.Name, args.QueryText, StringComparison.CurrentCultureIgnoreCase));
+					To = Stops?.First(stop => stop.Name.StartsWith(args.QueryText, StringComparison.CurrentCultureIgnoreCase));
 					if ( To != null ) sender.Text = To.Name;
 				}
 			} catch ( InvalidOperationException ) {
