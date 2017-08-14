@@ -33,7 +33,7 @@ namespace ZTI.Project.Client {
 			} else if ( CreditsListBoxItem.IsSelected ) {
 				MainFrame.Navigate(typeof(CreditsPage));
 			} else {
-				MainFrame.Navigate(typeof(Page));
+				MainFrame.Navigate(typeof(LineStopPage));
 			}
 		}
 	}

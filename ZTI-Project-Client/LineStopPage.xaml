@@ -1,0 +1,81 @@
+﻿<Page x:Class="ZTI.Project.Client.LineStopPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ZTI.Project.Client"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
+      mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer Grid.Column="1"
+                      HorizontalScrollMode="Enabled"
+                      HorizontalScrollBarVisibility="Visible"
+                      VerticalScrollMode="Enabled"
+                      VerticalScrollBarVisibility="Visible">
+            <RelativePanel>
+                <xaml:CanvasAnimatedControl Name="MapCanvas"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center"
+                                            Draw="MapCanvas_OnDraw"
+                                            Width="850"
+                                            Height="600"
+                                            Visibility="Collapsed"
+                                            RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                            RelativePanel.AlignVerticalCenterWithPanel="True" />
+
+                <ProgressRing Name="LoadingIndicator"
+                              IsActive="true"
+                              RelativePanel.AlignHorizontalCenterWithPanel="True"
+                              RelativePanel.AlignVerticalCenterWithPanel="True" />
+            </RelativePanel>
+        </ScrollViewer>
+
+        <Grid Grid.Column="0">
+            <Grid Margin="10,10,10,0"
+                  Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <AutoSuggestBox Name="StopSearchBox"
+                                PlaceholderText="Wybierz przystanek"
+                                QueryIcon="Map"
+                                RelativePanel.AlignLeftWithPanel="True"
+                                RelativePanel.AlignTopWithPanel="True"
+                                MinWidth="200"
+                                MaxWidth="200"
+                                GotFocus="StopSearchBox_OnGotFocus"
+                                TextChanged="StopSearchBox_TextChanged"
+                                QuerySubmitted="StopSearchBox_QuerySubmitted"
+                                SuggestionChosen="StopSearchBox_SuggestionChosen"
+                                Grid.Row="0"
+                                Grid.Column="0" />
+
+                <AutoSuggestBox Name="LineSearchBox"
+                                PlaceholderText="Wybierz linię"
+                                Margin="5,0,0,0"
+                                QueryIcon="Map"
+                                RelativePanel.RightOf="FromStopSearchBox"
+                                RelativePanel.AlignTopWith="FromStopSearchBox"
+                                MinWidth="200"
+                                MaxWidth="200"
+                                GotFocus="LineSearchBox_OnGotFocus"
+                                TextChanged="LineSearchBox_TextChanged"
+                                QuerySubmitted="LineSearchBox_QuerySubmitted"
+                                SuggestionChosen="LineSearchBox_SuggestionChosen"
+                                Grid.Row="0"
+                                Grid.Column="1" />
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

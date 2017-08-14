@@ -60,7 +60,7 @@
                                            Text="&#xE707;"
                                            RelativePanel.AlignLeftWithPanel="True" />
                                 <TextBlock FontSize="25"
-                                           Text="Rozkład przystanku"
+                                           Text="Rozkład"
                                            RelativePanel.RightOf="StopIconTextBlock"
                                            RelativePanel.AlignVerticalCenterWithPanel="True"
                                            Margin="20,0,0,0" />
