@@ -16,6 +16,9 @@ namespace ZTI.Project.Client.Data {
 		[DefaultValue(null)]
 		public string[] Variants { get; set; }
 
+		[XmlIgnore]
+		public bool HasVariants => Variants != null && Variants.Length > 1;
+
 		[XmlArray(ElementName = Constants.ROUTE)]
 		[XmlArrayItem(ElementName = Constants.STOP)]
 		public int[] Route { get; set; }
@@ -31,5 +34,22 @@ namespace ZTI.Project.Client.Data {
 
 		[XmlElement(ElementName = Constants.LAST)]
 		public DateTime Last { get; set; }
- 	}
+
+		public string[] ToStrings(List<Stop> allStops) {
+			Stop firstStop = allStops.First(stop => stop.ID == Route[0]);
+			Stop lastStop = allStops.First(stop => stop.ID == Route[Route.Length - 1]);
+
+			if ( HasVariants ) {
+				return new[] {
+					$"{Number}{Variants[0]} {firstStop} -> {lastStop}",
+					$"{Number}{Variants[1]} {lastStop} -> {firstStop}"
+				};
+			} else {
+				return new[] {
+					$"{Number} {firstStop} -> {lastStop}",
+					$"{Number} {lastStop} -> {firstStop}"
+				};
+			}
+		}
+	}
 }
