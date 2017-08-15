@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:ZTI.Project.Client"
       xmlns:data="using:ZTI.Project.Client.Data"
+      xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
@@ -77,15 +78,42 @@
                                 Grid.Column="1" />
             </Grid>
 
-            <ListView Name="StopListView"
-                      ItemsSource="{x:Bind stopList_}"
-                      Grid.Row="1">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="data:Stop">
-                        <TextBlock Text="{x:Bind Name}"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <ScrollViewer Grid.Row="1"
+                          HorizontalScrollMode="Enabled"
+                          HorizontalScrollBarVisibility="Visible"
+                          VerticalScrollMode="Enabled"
+                          VerticalScrollBarVisibility="Visible"
+                          Width="{Binding ActualWidth, ElementName=StopListView, Mode=OneWay}">
+                <StackPanel Orientation="Vertical">
+                    <ListView Name="StopListView"
+                              ItemsSource="{x:Bind stopList_}"
+                              SelectionMode="None"
+                              Margin="0,0,10,0">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="data:Stop">
+                                <controls:Expander Header="{x:Bind Name}"
+                                                   MinWidth="{Binding ActualWidth, ElementName=StopListView, Mode=OneWay}">
+                                    <TextBlock Text="Rozkład będzie zaimplementowany wkrótce" />
+                                </controls:Expander>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <ListView Name="LineListView"
+                              ItemsSource="{x:Bind lineList_}"
+                              SelectionMode="None"
+                              Margin="0,0,10,0">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="data:Line">
+                                <controls:Expander Header="{x:Bind Number}"
+                                                   MinWidth="{Binding ActualWidth, ElementName=LineListView, Mode=OneWay}">
+                                    <TextBlock Text="Rozkład będzie zaimplementowany wkrótce" />
+                                </controls:Expander>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Page>

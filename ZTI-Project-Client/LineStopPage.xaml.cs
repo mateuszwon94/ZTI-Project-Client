@@ -51,6 +51,7 @@ namespace ZTI.Project.Client {
 			timer.Start();
 
 			stopList_ = new ObservableCollection<Stop>();
+			lineList_ = new ObservableCollection<Line>();
 			//stopList_.CollectionChanged += (sender, args) => 
 			//	StopListView.Visibility = args.NewItems.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 		}
@@ -100,10 +101,22 @@ namespace ZTI.Project.Client {
 						                               Colors.Green);
 					}
 				}
+
+				if ( selectedStop_ != null ) {
+					args.DrawingSession.DrawCircle(add + selectedStop_.X * mul, selectedStop_.Y * mul, 10f,
+					                               Colors.Blue);
+				}
 			}
 		}
 
 		private void StopSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) {
+			if ( args.Reason != AutoSuggestionBoxTextChangeReason.SuggestionChosen ) {
+				lock ( lineList_ ) {
+					lineList_.Clear();
+				}
+				selectedStop_ = null;
+			}
+
 			if ( args.Reason == AutoSuggestionBoxTextChangeReason.UserInput ) {
 				sender.ItemsSource = Stops.Select(stop => stop.Name)
 				                          .OrderBy(stopName => stopName)
@@ -112,9 +125,29 @@ namespace ZTI.Project.Client {
 			}
 		}
 
-		private void StopSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) { }
+		private void StopSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
+			selectedStop_ =
+				Stops?.First(s => s.Name.Trim().StartsWith(args.QueryText, StringComparison.CurrentCultureIgnoreCase));
 
-		private void StopSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args) { }
+			lock ( lineList_ ) {
+				lineList_.Clear();
+				foreach ( Line line in Lines.Where(l => l.Route.Contains(selectedStop_.ID)) ) {
+					lineList_.Add(line);
+				}
+			}
+		}
+
+		private void StopSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args) {
+			selectedStop_ =
+				Stops?.First(s => string.Equals(s.Name, (string)args.SelectedItem, StringComparison.CurrentCultureIgnoreCase));
+
+			lock ( lineList_ ) {
+				lineList_.Clear();
+				foreach ( Line line in Lines.Where(l => l.Route.Contains(selectedStop_.ID)) ) {
+					lineList_.Add(line);
+				}
+			}
+		}
 
 		private void StopSearchBox_OnGotFocus(object sender, RoutedEventArgs e) {
 			if ( sender is AutoSuggestBox searchBox ) {
@@ -126,10 +159,11 @@ namespace ZTI.Project.Client {
 		}
 
 		private void LineSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) {
-			if ( args.Reason != AutoSuggestionBoxTextChangeReason.SuggestionChosen )
-				lock ( stopList_ ) 
+			if ( args.Reason != AutoSuggestionBoxTextChangeReason.SuggestionChosen ) {
+				lock ( stopList_ )
 					stopList_.Clear();
-				
+			} 
+
 			if ( args.Reason == AutoSuggestionBoxTextChangeReason.UserInput ) {
 				sender.ItemsSource = Lines?.SelectMany(line => {
 					                          Stop firstStop = Stops.First(stop => stop.ID == line.Route[0]);
@@ -190,6 +224,8 @@ namespace ZTI.Project.Client {
 			}
 		}
 
-		private readonly ObservableCollection<Stop> stopList_; 
+		private readonly ObservableCollection<Stop> stopList_;
+		private readonly ObservableCollection<Line> lineList_;
+		private Stop selectedStop_;
 	}
 }
