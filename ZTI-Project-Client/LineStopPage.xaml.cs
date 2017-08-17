@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -50,10 +51,7 @@ namespace ZTI.Project.Client {
 			};
 			timer.Start();
 
-			stopList_ = new ObservableCollection<Stop>();
-			lineList_ = new ObservableCollection<Line>();
-			//stopList_.CollectionChanged += (sender, args) => 
-			//	StopListView.Visibility = args.NewItems.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+			scheduleList_ = new ObservableCollection<Schedule>();
 		}
 
 		private async void GetStops() => Stops = await GetListOfDataFromServer<Stop>(Url.APP + Url.STOPS);
@@ -87,35 +85,30 @@ namespace ZTI.Project.Client {
 				                             new CanvasTextFormat {
 					                             FontSize = 15
 				                             });
-				lock ( stopList_ ) {
-					if ( stopList_ != null && stopList_.Count > 0 ) {
+				lock ( scheduleList_ ) {
+					if ( scheduleList_ != null && scheduleList_.Count > 0 && selectedStop_ == null ) {
 
-						for ( int i = 0 ; i < stopList_.Count - 1 ; ++i ) {
-							args.DrawingSession.DrawLine(add + stopList_[i].X * mul, stopList_[i].Y * mul,
-							                             add + stopList_[i + 1].X * mul, stopList_[i + 1].Y * mul,
+						for ( int i = 0 ; i < scheduleList_.Count - 1 ; ++i ) {
+							args.DrawingSession.DrawLine(add + scheduleList_[i].Stop.X * mul, scheduleList_[i].Stop.Y * mul,
+							                             add + scheduleList_[i + 1].Stop.X * mul, scheduleList_[i + 1].Stop.Y * mul,
 							                             Colors.LightGreen);
-							args.DrawingSession.FillCircle(add + stopList_[i].X * mul, stopList_[i].Y * mul, 5f,
+							args.DrawingSession.FillCircle(add + scheduleList_[i].Stop.X * mul, scheduleList_[i].Stop.Y * mul, 5f,
 							                               Colors.Green);
 						}
-						args.DrawingSession.FillCircle(add + stopList_.Last().X * mul, stopList_.Last().Y * mul, 5f,
+						args.DrawingSession.FillCircle(add + scheduleList_.Last().Stop.X * mul, scheduleList_.Last().Stop.Y * mul, 5f,
 						                               Colors.Green);
+					} else if ( selectedStop_ != null ) {
+						args.DrawingSession.DrawCircle(add + selectedStop_.X * mul, selectedStop_.Y * mul, 10f,
+						                               Colors.Blue);
 					}
-				}
-
-				if ( selectedStop_ != null ) {
-					args.DrawingSession.DrawCircle(add + selectedStop_.X * mul, selectedStop_.Y * mul, 10f,
-					                               Colors.Blue);
-				}
+				} 
 			}
 		}
 
 		private void StopSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) {
-			if ( args.Reason != AutoSuggestionBoxTextChangeReason.SuggestionChosen ) {
-				lock ( lineList_ ) {
-					lineList_.Clear();
-				}
-				selectedStop_ = null;
-			}
+			lock ( scheduleList_ )
+				scheduleList_.Clear();
+			selectedStop_ = null;
 
 			if ( args.Reason == AutoSuggestionBoxTextChangeReason.UserInput ) {
 				sender.ItemsSource = Stops.Select(stop => stop.Name)
@@ -125,27 +118,19 @@ namespace ZTI.Project.Client {
 			}
 		}
 
-		private void StopSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
+		private async void StopSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
 			selectedStop_ =
 				Stops?.First(s => s.Name.Trim().StartsWith(args.QueryText, StringComparison.CurrentCultureIgnoreCase));
 
-			lock ( lineList_ ) {
-				lineList_.Clear();
-				foreach ( Line line in Lines.Where(l => l.Route.Contains(selectedStop_.ID)) ) {
-					lineList_.Add(line);
-				}
-			}
-		}
+			sender.Text = selectedStop_.Name + (selectedStop_.NZ ? " NZ" : string.Empty);
+			
+			lock (scheduleList_)
+				scheduleList_.Clear();
 
-		private void StopSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args) {
-			selectedStop_ =
-				Stops?.First(s => string.Equals(s.Name, (string)args.SelectedItem, StringComparison.CurrentCultureIgnoreCase));
-
-			lock ( lineList_ ) {
-				lineList_.Clear();
-				foreach ( Line line in Lines.Where(l => l.Route.Contains(selectedStop_.ID)) ) {
-					lineList_.Add(line);
-				}
+			IEnumerable<Schedule> schedules = await GetSchedule(selectedStop_);
+			lock ( scheduleList_ ) {
+				foreach ( Schedule schedile in schedules )
+					scheduleList_.Add(schedile);
 			}
 		}
 
@@ -159,19 +144,22 @@ namespace ZTI.Project.Client {
 		}
 
 		private void LineSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) {
-			if ( args.Reason != AutoSuggestionBoxTextChangeReason.SuggestionChosen ) {
-				lock ( stopList_ )
-					stopList_.Clear();
-			} 
+			lock ( scheduleList_ ) 
+				scheduleList_.Clear();
 
 			if ( args.Reason == AutoSuggestionBoxTextChangeReason.UserInput ) {
 				sender.ItemsSource = Lines?.SelectMany(line => {
 					                          Stop firstStop = Stops.First(stop => stop.ID == line.Route[0]);
 					                          Stop lastStop = Stops.First(stop => stop.ID == line.Route[line.Route.Length - 1]);
-					                          return new List<(int num, string dir)>(2) {
-						                          (line.Number, $"{line.Variants?[0]} {firstStop} -> {lastStop}"),
-						                          (line.Number, $"{line.Variants?[1]} {lastStop} -> {firstStop}")
-					                          };
+					                          if ( line.Route[0] == line.Route[line.Route.Length - 1] )
+						                          return new List<(int num, string dir)>(1) {
+							                          (line.Number, $" {firstStop} <-> {lastStop}")
+						                          };
+					                          else
+						                          return new List<(int num, string dir)>(2) {
+							                          (line.Number, $" {firstStop} <-> {lastStop}"),
+							                          (line.Number, $" {lastStop} <-> {firstStop}")
+						                          };
 				                          })
 				                          .OrderBy(line => line.num)
 				                          .ThenBy(line => line.dir)
@@ -181,28 +169,25 @@ namespace ZTI.Project.Client {
 			}
 		}
 
-		private void LineSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
+		private async void LineSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
 			Line line =
 				Lines?.First(l => l.ToStrings(Stops)
 				                   .Any(lineStr => lineStr.StartsWith(args.QueryText,
 				                                                      StringComparison.CurrentCultureIgnoreCase)));
 
-			lock ( stopList_ ) {
-				stopList_.Clear();
-				foreach ( Stop stop in line?.Route?.Select(id => Stops.First(stop => stop.ID == id)) )
-					stopList_.Add(stop);
+			try {
+				sender.Text = line.ToStrings(Stops)[2];
+			} catch ( IndexOutOfRangeException ) {
+				sender.Text = line.ToStrings(Stops)[0];
 			}
-		}
 
-		private void LineSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args) {
-			Line line =
-				Lines?.First(l => l.ToStrings(Stops)
-				                   .Any(lineStr => lineStr == (string)args.SelectedItem));
+			lock ( scheduleList_ ) 
+				scheduleList_.Clear();
 
-			lock ( stopList_ ) {
-				stopList_.Clear();
-				foreach ( Stop stop in line?.Route?.Select(id => Stops.First(stop => stop.ID == id)) )
-					stopList_.Add(stop);
+				IEnumerable<Schedule> schedules = await GetSchedule(line);
+			lock ( scheduleList_ ) {
+				foreach ( Schedule schedile in schedules )
+					scheduleList_.Add(schedile);
 			}
 		}
 
@@ -211,10 +196,15 @@ namespace ZTI.Project.Client {
 				searchBox.ItemsSource = Lines?.SelectMany(line => {
 					                             Stop firstStop = Stops.First(stop => stop.ID == line.Route[0]);
 					                             Stop lastStop = Stops.First(stop => stop.ID == line.Route[line.Route.Length - 1]);
-					                             return new List<(int num, string dir)>(2) {
-						                             (line.Number, $"{line.Variants?[0]} {firstStop} -> {lastStop}"),
-						                             (line.Number, $"{line.Variants?[1]} {lastStop} -> {firstStop}")
-					                             };
+					                             if ( line.Route[0] == line.Route[line.Route.Length - 1] )
+						                             return new List<(int num, string dir)>(1) {
+							                             (line.Number, $" {firstStop} <-> {lastStop}")
+						                             };
+					                             else
+						                             return new List<(int num, string dir)>(2) {
+							                             (line.Number, $" {firstStop} <-> {lastStop}"),
+							                             (line.Number, $" {lastStop} <-> {firstStop}")
+						                             };
 				                             })
 				                             .OrderBy(line => line.num)
 				                             .ThenBy(line => line.dir)
@@ -224,8 +214,45 @@ namespace ZTI.Project.Client {
 			}
 		}
 
-		private readonly ObservableCollection<Stop> stopList_;
-		private readonly ObservableCollection<Line> lineList_;
+		private async Task<IEnumerable<Schedule>> GetSchedule(Line line) {
+			ScheduleLoading.Visibility = Visibility.Visible;
+			ScheduleLoading.IsActive = true;
+
+			var args = new Dictionary<string, string> {
+				[LINE] = line.Number.ToString(),
+			};
+
+			var content = new FormUrlEncodedContent(args);
+
+			var responseMsg = await Http.Client.PostAsync(Url.APP + Url.SCHEDULES, content);
+			string response = await responseMsg.Content.ReadAsStringAsync();
+
+			ScheduleLoading.IsActive = false;
+			ScheduleLoading.Visibility = Visibility.Collapsed;
+
+			return Schedule.CreateFromXml(response, Stops, Lines);
+		}
+
+		private async Task<IEnumerable<Schedule>> GetSchedule(Stop stop) {
+			ScheduleLoading.Visibility = Visibility.Visible;
+			ScheduleLoading.IsActive = true;
+
+			var args = new Dictionary<string, string> {
+				[STOP] = stop.ID.ToString(),
+			};
+
+			var content = new FormUrlEncodedContent(args);
+
+			var responseMsg = await Http.Client.PostAsync(Url.APP + Url.SCHEDULES, content);
+			string response = await responseMsg.Content.ReadAsStringAsync();
+			
+			ScheduleLoading.IsActive = false;
+			ScheduleLoading.Visibility = Visibility.Collapsed;
+
+			return Schedule.CreateFromXml(response, Stops, Lines);
+		}
+
+		private readonly ObservableCollection<Schedule> scheduleList_;
 		private Stop selectedStop_;
 	}
 }

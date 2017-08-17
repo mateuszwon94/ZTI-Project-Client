@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Numerics;
 using System.Xml.Serialization;
 
 namespace ZTI.Project.Client.Data {
@@ -41,15 +40,23 @@ namespace ZTI.Project.Client.Data {
 
 			if ( HasVariants ) {
 				return new[] {
-					$"{Number}{Variants[0]} {firstStop} -> {lastStop}",
-					$"{Number}{Variants[1]} {lastStop} -> {firstStop}"
+					$"{Number}{Variants[0]} {firstStop} <-> {lastStop}",
+					$"{Number}{Variants[1]} {lastStop} <-> {firstStop}",
+					$"{Number} {lastStop} <-> {firstStop}"
 				};
 			} else {
 				return new[] {
-					$"{Number} {firstStop} -> {lastStop}",
-					$"{Number} {lastStop} -> {firstStop}"
+					$"{Number} {firstStop} <-> {lastStop}",
+					$"{Number} {lastStop} <-> {firstStop}"
 				};
 			}
+		}
+
+		public string ToString(List<Stop> allStops) {
+			Stop firstStop = allStops.First(stop => stop.ID == Route[0]);
+			Stop lastStop = allStops.First(stop => stop.ID == Route[Route.Length - 1]);
+
+			return $"{Number} {firstStop} <-> {lastStop}";
 		}
 	}
 }

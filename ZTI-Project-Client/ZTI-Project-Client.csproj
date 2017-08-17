@@ -102,6 +102,7 @@
       <DependentUpon>CreditsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data\Line.cs" />
+    <Compile Include="Data\Schedule.cs" />
     <Compile Include="LineStopPage.xaml.cs">
       <DependentUpon>LineStopPage.xaml</DependentUpon>
     </Compile>

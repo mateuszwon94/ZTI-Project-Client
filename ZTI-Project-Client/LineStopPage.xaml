@@ -6,7 +6,7 @@
       xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
+      xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
       mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -21,7 +21,7 @@
                       VerticalScrollMode="Enabled"
                       VerticalScrollBarVisibility="Visible">
             <RelativePanel>
-                <xaml:CanvasAnimatedControl Name="MapCanvas"
+                <canvas:CanvasAnimatedControl Name="MapCanvas"
                                             VerticalAlignment="Center"
                                             HorizontalAlignment="Center"
                                             Draw="MapCanvas_OnDraw"
@@ -39,17 +39,7 @@
         </ScrollViewer>
 
         <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <Grid Margin="10,10,10,10"
-                  Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+            <RelativePanel Margin="10,10,10,10">
                 <AutoSuggestBox Name="StopSearchBox"
                                 PlaceholderText="Wybierz przystanek"
                                 QueryIcon="Map"
@@ -57,63 +47,58 @@
                                 RelativePanel.AlignTopWithPanel="True"
                                 MinWidth="200"
                                 MaxWidth="200"
+                                UpdateTextOnSelect="False"
                                 GotFocus="StopSearchBox_OnGotFocus"
                                 TextChanged="StopSearchBox_TextChanged"
-                                QuerySubmitted="StopSearchBox_QuerySubmitted"
-                                SuggestionChosen="StopSearchBox_SuggestionChosen"
-                                Grid.Column="0" />
+                                QuerySubmitted="StopSearchBox_QuerySubmitted" />
 
                 <AutoSuggestBox Name="LineSearchBox"
                                 PlaceholderText="Wybierz linię"
                                 Margin="5,0,0,0"
                                 QueryIcon="Map"
-                                RelativePanel.RightOf="FromStopSearchBox"
-                                RelativePanel.AlignTopWith="FromStopSearchBox"
+                                RelativePanel.RightOf="StopSearchBox"
+                                RelativePanel.AlignTopWith="StopSearchBox"
                                 MinWidth="200"
                                 MaxWidth="200"
+                                UpdateTextOnSelect="False"
                                 GotFocus="LineSearchBox_OnGotFocus"
                                 TextChanged="LineSearchBox_TextChanged"
-                                QuerySubmitted="LineSearchBox_QuerySubmitted"
-                                SuggestionChosen="LineSearchBox_SuggestionChosen"
-                                Grid.Column="1" />
-            </Grid>
+                                QuerySubmitted="LineSearchBox_QuerySubmitted" />
 
-            <ScrollViewer Grid.Row="1"
-                          HorizontalScrollMode="Enabled"
-                          HorizontalScrollBarVisibility="Visible"
-                          VerticalScrollMode="Enabled"
-                          VerticalScrollBarVisibility="Visible"
-                          Width="{Binding ActualWidth, ElementName=StopListView, Mode=OneWay}">
-                <StackPanel Orientation="Vertical">
+                <ProgressRing Name="ScheduleLoading"
+                              Visibility="Collapsed"
+                              RelativePanel.AlignHorizontalCenterWithPanel="true"
+                              RelativePanel.Below="LineSearchBox"
+                              Margin="0,5,0,0"/>
+
+                <ScrollViewer RelativePanel.AlignLeftWith="StopSearchBox"
+                              RelativePanel.AlignRightWith="LineSearchBox"
+                              RelativePanel.AlignBottomWithPanel="True"
+                              RelativePanel.Below="LineSearchBox"
+                              Name="ScheduleScrollViewer"
+                              HorizontalScrollMode="Enabled"
+                              HorizontalScrollBarVisibility="Visible"
+                              VerticalScrollMode="Enabled"
+                              VerticalScrollBarVisibility="Visible"
+                              Margin="0,5,10,0">
                     <ListView Name="StopListView"
-                              ItemsSource="{x:Bind stopList_}"
-                              SelectionMode="None"
-                              Margin="0,0,10,0">
+                              ItemsSource="{x:Bind scheduleList_}"
+                              SelectionMode="None">
                         <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="data:Stop">
-                                <controls:Expander Header="{x:Bind Name}"
-                                                   MinWidth="{Binding ActualWidth, ElementName=StopListView, Mode=OneWay}">
-                                    <TextBlock Text="Rozkład będzie zaimplementowany wkrótce" />
+                            <DataTemplate x:DataType="data:Schedule">
+                                <controls:Expander Header="{x:Bind HeaderText}"
+                                                   MinWidth="{Binding ActualWidth, ElementName=ScheduleScrollViewer, Mode=OneWay}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{x:Bind TimesText1}" />
+                                        <TextBlock Text="{x:Bind TimesText2}"
+                                                   Margin="10,0,0,0" />
+                                    </StackPanel>
                                 </controls:Expander>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-
-                    <ListView Name="LineListView"
-                              ItemsSource="{x:Bind lineList_}"
-                              SelectionMode="None"
-                              Margin="0,0,10,0">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="data:Line">
-                                <controls:Expander Header="{x:Bind Number}"
-                                                   MinWidth="{Binding ActualWidth, ElementName=LineListView, Mode=OneWay}">
-                                    <TextBlock Text="Rozkład będzie zaimplementowany wkrótce" />
-                                </controls:Expander>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </StackPanel>
-            </ScrollViewer>
+                </ScrollViewer>
+            </RelativePanel>
         </Grid>
     </Grid>
 </Page>

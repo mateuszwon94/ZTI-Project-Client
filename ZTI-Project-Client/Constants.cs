@@ -11,6 +11,8 @@ namespace ZTI.Project.Client {
 		public const string LOC_Y = "loc_y";
 		public const string CONNS = "conns";
 		public const string CONN = "conn";
+		public const string TIMES = "times";
+		public const string TIME = "time";
 		public const string LINES = "lines";
 		public const string LINE = "line";
 		public const string NUMBER = "number";
@@ -22,6 +24,10 @@ namespace ZTI.Project.Client {
 		public const string F_NOT_PEAK = "f_not_peak";
 		public const string FIRST = "first";
 		public const string LAST = "last";
+		public const string SCHEDULES = "schedules";
+		public const string SCHEDULE = "schedule";
+		public const string FROM = "from";
+		public const string TO = "to";
 
 		public static class Http {
 			public static readonly HttpClient Client = new HttpClient();
@@ -37,6 +43,7 @@ namespace ZTI.Project.Client {
 			public const string STOPS = "Stops";
 			public const string LINES = "Lines";
 			public const string SEARCH_ROUTE = "SearchRoute";
+			public const string SCHEDULES = "Schedules";
 		}
 	}
 }
