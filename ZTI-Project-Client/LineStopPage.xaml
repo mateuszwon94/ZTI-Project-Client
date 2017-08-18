@@ -21,7 +21,7 @@
                       VerticalScrollMode="Enabled"
                       VerticalScrollBarVisibility="Visible">
             <RelativePanel>
-                <canvas:CanvasAnimatedControl Name="MapCanvas"
+                <canvas:CanvasAnimatedControl x:Name="MapCanvas"
                                             VerticalAlignment="Center"
                                             HorizontalAlignment="Center"
                                             Draw="MapCanvas_OnDraw"

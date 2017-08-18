@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Net.Http;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Input;
 using Windows.Foundation;
@@ -24,6 +26,7 @@ using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using MetroLog;
+using Microsoft.Toolkit.Uwp;
 using ZTI.Project.Client.Data;
 using static ZTI.Project.Client.Constants;
 using static ZTI.Project.Client.Utils;
@@ -53,10 +56,10 @@ namespace ZTI.Project.Client {
 
 		private async void GetStops() => Stops = await GetListOfDataFromServer<Stop>(Url.APP + Url.STOPS);
 
-		public List<Stop> Stops;
+		public static List<Stop> Stops;
 		public Stop From { get; private set; }
 		public Stop To { get; private set; }
-		public Route Route { get; private set; }
+		public readonly ObservableCollection<Data.Route.Stop> Route = new ObservableCollection<Data.Route.Stop>();
 
 		private void MapCanvas_OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args) {
 			const float mul = 5f;
@@ -91,16 +94,22 @@ namespace ZTI.Project.Client {
 				                             });
 			}
 
-			if ( Route != null ) {
-				for ( int i = 0 ; i < Route.Count -1 ; ++i ) {
-					args.DrawingSession.DrawLine(add + Route[i].X * mul, Route[i].Y * mul,
-					                             add + Route[i+1].X * mul, Route[i+1].Y * mul,
-					                             Colors.LightGreen);
-					args.DrawingSession.FillCircle(add + Route[i].X * mul, Route[i].Y * mul, 5f,
+			lock ( Route ) {
+				if ( Route.Count > 0 ) {
+					Stop currStop = Stops.First(s => s.ID == Route[0].ID);
+					for ( int i = 0 ; i < Route.Count - 1 ; ++i ) {
+						Stop nextStop = Stops.First(s => s.ID == Route[i + 1].ID);
+						args.DrawingSession.DrawLine(add + currStop.X * mul, currStop.Y * mul,
+						                             add + nextStop.X * mul, nextStop.Y * mul,
+						                             lineColors[Route[i].Line], 3);
+						args.DrawingSession.FillCircle(add + currStop.X * mul, currStop.Y * mul, 5f,
+						                               Colors.Green);
+						currStop = nextStop;
+					}
+					currStop = Stops.First(s => s.ID == Route[Route.Count - 1].ID);
+					args.DrawingSession.FillCircle(add + currStop.X * mul, currStop.Y * mul, 5f,
 					                               Colors.Green);
 				}
-				args.DrawingSession.FillCircle(add + Route[Route.Count -1].X * mul, Route[Route.Count - 1].Y * mul, 5f,
-				                               Colors.Green);
 			}
 		}
 
@@ -110,6 +119,9 @@ namespace ZTI.Project.Client {
 					From = null;
 				else if ( sender == ToStopSearchBox )
 					To = null;
+
+				lock (Route)
+					Route.Clear();
 
 				sender.ItemsSource = Stops.Select(stop => stop.Name)
 				                          .OrderBy(stopName => stopName)
@@ -132,13 +144,6 @@ namespace ZTI.Project.Client {
 			}
 		}
 
-		private void StopSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args) {
-			if ( sender == FromStopSearchBox )
-				From = Stops?.First(stop => stop.Name == (string)args.SelectedItem);
-			else if ( sender == ToStopSearchBox )
-				To = Stops?.First(stop => stop.Name == (string)args.SelectedItem);
-		}
-
 		private void StopSearchBox_OnGotFocus(object sender, RoutedEventArgs e) {
 			if ( sender is AutoSuggestBox searchBox ) {
 				searchBox.ItemsSource = Stops?.Select(stop => stop.Name)
@@ -150,9 +155,13 @@ namespace ZTI.Project.Client {
 
 		private async void SearchButton_OnClick(object sender, RoutedEventArgs e) {
 			if ( From != null && To != null ) {
+				lock (Route)
+					Route.Clear();
+
 				var stops = new Dictionary<string, string> {
-					["from"] = From.ID.ToString(),
-					["to"] = To.ID.ToString()
+					[FROM] = From.ID.ToString(),
+					[TO] = To.ID.ToString(),
+					[TIME] = SearhTimePicker.Time.ToString()
 				};
 
 				var content = new FormUrlEncodedContent(stops);
@@ -160,10 +169,30 @@ namespace ZTI.Project.Client {
 				var responseMsg = await Http.Client.PostAsync(Url.APP + Url.SEARCH_ROUTE, content);
 				string response = await responseMsg.Content.ReadAsStringAsync();
 
-				Route = new Route(response, Stops);
-				From = Route[0];
-				To = Route[Route.Count - 1];
+				using ( Stream responseStream = new MemoryStream(Encoding.UTF8.GetBytes(response)) ) {
+					XmlSerializer deserializer = new XmlSerializer(typeof(List<Data.Route.Stop>), new XmlRootAttribute(ROUTE));
+
+					List< Data.Route.Stop> list = (List<Data.Route.Stop>)deserializer.Deserialize(responseStream);
+					lock ( Route ) {
+						foreach ( Data.Route.Stop stop in list )
+							Route.Add(stop);
+					}
+				}
 			}
 		}
+
+		private static readonly Dictionary<int, Color> lineColors = new Dictionary<int, Color>(11) {
+			[0] = Colors.Brown,
+			[1] = Colors.BlueViolet,
+			[2] = Colors.DarkKhaki,
+			[3] = Colors.DarkOrange,
+			[4] = Colors.Indigo,
+			[5] = Colors.Navy,
+			[6] = Colors.Violet,
+			[7] = Colors.Tomato,
+			[8] = Colors.Olive,
+			[9] = Colors.DarkOrchid,
+			[10] = Colors.IndianRed,
+		};
 	}
 }

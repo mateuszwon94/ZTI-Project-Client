@@ -1,30 +1,35 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Serialization;
 
-namespace ZTI.Project.Client.Data {
-	public class Route : IEnumerable<Stop> {
-		public Route(string xml, List<Stop> stops) {
-			using ( MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
-			using ( XmlReader reader = XmlReader.Create(memStream) ) {
-				reader.MoveToContent();
-				while ( reader.Read() ) {
-					if ( reader.NodeType == XmlNodeType.Element && reader.Name == Constants.STOP )
-						stops_.Add(stops.First(stop => stop.ID == int.Parse(reader.GetAttribute(Constants.ID))));
-				}
-			}
+namespace ZTI.Project.Client.Data.Route {
+	[Serializable, XmlType(TypeName = Constants.STOP)]
+	public class Stop {
+		[XmlAttribute(AttributeName = Constants.ID)]
+		public int ID { get; set; }
+
+		[XmlElement(ElementName = Constants.LINE)]
+		public int Line { get; set; }
+
+		[XmlElement(ElementName = Constants.TIME)]
+		public string TimeString {
+			get => $"{Time.Hours}:{Time.Minutes}";
+			set => Time = TimeSpan.Parse(value);
 		}
 
-		public Stop this[int i] => stops_[i];
+		[XmlIgnore]
+		public TimeSpan Time { get; set; }
 
-		public int Count => stops_.Count;
+		public string String =>
+			$"Linia {Line} - "+
+			$"odjazd o {TimeString} " +
+			$"z przystanku {RouteSearchPage.Stops.First(s => s.ID == ID).Name} ";
 
-		private readonly List<Stop> stops_ = new List<Stop>();
-
-		public IEnumerator<Stop> GetEnumerator() => stops_.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }
+

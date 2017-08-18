@@ -57,8 +57,8 @@ namespace ZTI.Project.Client {
 		private async void GetStops() => Stops = await GetListOfDataFromServer<Stop>(Url.APP + Url.STOPS);
 		private async void GetLines() => Lines = await GetListOfDataFromServer<Line>(Url.APP + Url.LINES);
 
-		public List<Stop> Stops;
-		public List<Line> Lines;
+		public static List<Stop> Stops;
+		public static List<Line> Lines;
 
 		private void MapCanvas_OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args) {
 			const float mul = 5f;

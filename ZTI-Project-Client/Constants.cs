@@ -26,6 +26,7 @@ namespace ZTI.Project.Client {
 		public const string LAST = "last";
 		public const string SCHEDULES = "schedules";
 		public const string SCHEDULE = "schedule";
+		public const string CHANGE = "change";
 		public const string FROM = "from";
 		public const string TO = "to";
 
