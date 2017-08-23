@@ -66,6 +66,20 @@
                                            Margin="20,0,0,0" />
                             </RelativePanel>
                         </ListBoxItem>
+                        <ListBoxItem Name="LogsListBoxItem">
+                            <RelativePanel>
+                                <TextBlock Name="LogsIconTextBlock"
+                                           FontFamily="{StaticResource SegoeFont}"
+                                           FontSize="30"
+                                           Text="&#xEE92;"
+                                           RelativePanel.AlignLeftWithPanel="True" />
+                                <TextBlock FontSize="25"
+                                           Text="Zobacz logi"
+                                           RelativePanel.RightOf="LogsIconTextBlock"
+                                           RelativePanel.AlignVerticalCenterWithPanel="True"
+                                           Margin="20,0,0,0" />
+                            </RelativePanel>
+                        </ListBoxItem>
                         <ListBoxItem Name="CreditsListBoxItem"
                                      IsSelected="True">
                             <RelativePanel>

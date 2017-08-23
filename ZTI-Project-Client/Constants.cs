@@ -13,6 +13,8 @@ namespace ZTI.Project.Client {
 		public const string CONN = "conn";
 		public const string TIMES = "times";
 		public const string TIME = "time";
+		public const string LOGS = "logs";
+		public const string LOG = "log";
 		public const string LINES = "lines";
 		public const string LINE = "line";
 		public const string NUMBER = "number";
@@ -40,6 +42,7 @@ namespace ZTI.Project.Client {
 			public const string LINES = "Lines";
 			public const string SEARCH_ROUTE = "SearchRoute";
 			public const string SCHEDULES = "Schedules";
+			public const string LOG = "Log";
 		}
 	}
 }

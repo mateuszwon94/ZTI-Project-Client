@@ -30,5 +30,19 @@ namespace ZTI.Project.Client {
 
 			throw lastException;
 		}
+
+		public static async Task<IEnumerable<Log>> GetListOfLogsFromServer(int numberOfRequests = 10) {
+			Exception lastException = null;
+			for ( int i = 0 ; i < numberOfRequests ; ++i ) {
+				try {
+					string response = await Http.Client.GetStringAsync(Url.APP + Url.LOG);
+					return Log.CreateFromXml(response);
+				} catch ( Exception ex ) {
+					lastException = ex;
+				}
+			}
+
+			throw lastException;
+		}
 	}
 }

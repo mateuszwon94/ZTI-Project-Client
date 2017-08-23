@@ -102,9 +102,13 @@
       <DependentUpon>CreditsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data\Line.cs" />
+    <Compile Include="Data\Log.cs" />
     <Compile Include="Data\Schedule.cs" />
     <Compile Include="LineStopPage.xaml.cs">
       <DependentUpon>LineStopPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LogPage.xaml.cs">
+      <DependentUpon>LogPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MenuPage.xaml.cs">
       <DependentUpon>MenuPage.xaml</DependentUpon>
@@ -178,6 +182,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="LineStopPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LogPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

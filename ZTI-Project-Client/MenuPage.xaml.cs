@@ -20,6 +20,8 @@ namespace ZTI.Project.Client {
 				MainFrame.Navigate(typeof(RouteSearchPage));
 			} else if ( CreditsListBoxItem.IsSelected ) {
 				MainFrame.Navigate(typeof(CreditsPage));
+			} else if (LogsListBoxItem.IsSelected) {
+				MainFrame.Navigate(typeof(LogPage));
 			} else {
 				MainFrame.Navigate(typeof(LineStopPage));
 			}
