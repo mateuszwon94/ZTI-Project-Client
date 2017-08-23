@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -56,7 +55,7 @@ namespace ZTI.Project.Client.Data {
 			get {
 				StringBuilder sb = new StringBuilder();
 
-				string variant = Line.Variants != null ? Line.Variants[0] : "1";
+				string variant = Line.Variants != null ? Line.Variants[1] : "1";
 
 				int v;
 				sb.Append(int.TryParse(variant, out v)

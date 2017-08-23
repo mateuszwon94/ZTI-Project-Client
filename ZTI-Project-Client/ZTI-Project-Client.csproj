@@ -191,9 +191,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MetroLog">
-      <Version>1.0.1</Version>
-    </PackageReference>
     <PackageReference Include="MetroLog.Targets">
       <Version>1.0.0</Version>
     </PackageReference>

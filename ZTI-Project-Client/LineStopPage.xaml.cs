@@ -1,22 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using ZTI.Project.Client.Data;
@@ -85,7 +75,7 @@ namespace ZTI.Project.Client {
 				                             new CanvasTextFormat {
 					                             FontSize = 15
 				                             });
-				lock ( scheduleList_ ) {
+				lock ( scheduleListMutex_ ) {
 					if ( scheduleList_ != null && scheduleList_.Count > 0 && selectedStop_ == null ) {
 
 						for ( int i = 0 ; i < scheduleList_.Count - 1 ; ++i ) {
@@ -101,34 +91,38 @@ namespace ZTI.Project.Client {
 						args.DrawingSession.DrawCircle(add + selectedStop_.X * mul, selectedStop_.Y * mul, 10f,
 						                               Colors.Blue);
 					}
-				} 
+				}
 			}
 		}
 
 		private void StopSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) {
-			lock ( scheduleList_ )
+			lock ( scheduleListMutex_ )
 				scheduleList_.Clear();
 			selectedStop_ = null;
 
 			if ( args.Reason == AutoSuggestionBoxTextChangeReason.UserInput ) {
 				sender.ItemsSource = Stops.Select(stop => stop.Name)
 				                          .OrderBy(stopName => stopName)
-				                          .Where(stopName => stopName.ToLower().StartsWith(sender.Text.Trim().ToLower()) ||
-				                                             stopName.ToLower().Contains(sender.Text.Trim().ToLower()));
+				                          .Where(stopName => stopName.ToLowerInvariant()
+				                                                     .StartsWith(sender.Text.Trim().ToLowerInvariant()) ||
+				                                             stopName.ToLowerInvariant()
+				                                                     .Contains(sender.Text.Trim().ToLowerInvariant()));
 			}
 		}
 
 		private async void StopSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
 			selectedStop_ =
-				Stops?.First(s => s.Name.Trim().StartsWith(args.QueryText, StringComparison.CurrentCultureIgnoreCase));
+				Stops?.First(s => s.Name.Trim()
+				                   .StartsWith(args.QueryText != string.Empty ? args.QueryText : (string)args.ChosenSuggestion,
+				                               StringComparison.CurrentCultureIgnoreCase));
 
 			sender.Text = selectedStop_.Name + (selectedStop_.NZ ? " NZ" : string.Empty);
-			
-			lock (scheduleList_)
+
+			lock ( scheduleListMutex_ )
 				scheduleList_.Clear();
 
 			IEnumerable<Schedule> schedules = await GetSchedule(selectedStop_);
-			lock ( scheduleList_ ) {
+			lock ( scheduleListMutex_ ) {
 				foreach ( Schedule schedile in schedules )
 					scheduleList_.Add(schedile);
 			}
@@ -138,13 +132,15 @@ namespace ZTI.Project.Client {
 			if ( sender is AutoSuggestBox searchBox ) {
 				searchBox.ItemsSource = Stops?.Select(stop => stop.Name)
 				                             .OrderBy(stopName => stopName)
-				                             .Where(stopName => stopName.ToLower().StartsWith(searchBox.Text.Trim().ToLower()) ||
-				                                                stopName.ToLower().Contains(searchBox.Text.Trim().ToLower()));
+				                             .Where(stopName => stopName.ToLowerInvariant()
+				                                                        .StartsWith(searchBox.Text.Trim().ToLowerInvariant()) ||
+				                                                stopName.ToLowerInvariant()
+				                                                        .Contains(searchBox.Text.Trim().ToLowerInvariant()));
 			}
 		}
 
 		private void LineSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) {
-			lock ( scheduleList_ ) 
+			lock ( scheduleListMutex_ )
 				scheduleList_.Clear();
 
 			if ( args.Reason == AutoSuggestionBoxTextChangeReason.UserInput ) {
@@ -164,16 +160,19 @@ namespace ZTI.Project.Client {
 				                          .OrderBy(line => line.num)
 				                          .ThenBy(line => line.dir)
 				                          .Select(line => $"{line.num}{line.dir}")
-				                          .Where(line => line.ToLower().StartsWith(sender.Text.Trim().ToLower()) ||
-				                                         line.ToLower().Contains(sender.Text.Trim().ToLower()));
+				                          .Where(line =>
+					                                 line.ToLowerInvariant().StartsWith(sender.Text.Trim().ToLowerInvariant()) ||
+					                                 line.ToLowerInvariant().Contains(sender.Text.Trim().ToLowerInvariant()));
 			}
 		}
 
 		private async void LineSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
 			Line line =
 				Lines?.First(l => l.ToStrings(Stops)
-				                   .Any(lineStr => lineStr.StartsWith(args.QueryText,
-				                                                      StringComparison.CurrentCultureIgnoreCase)));
+				                   .Any(lineStr =>
+					                        lineStr
+						                        .StartsWith(args.QueryText != string.Empty ? args.QueryText : (string)args.ChosenSuggestion,
+						                                    StringComparison.CurrentCultureIgnoreCase)));
 
 			try {
 				sender.Text = line.ToStrings(Stops)[2];
@@ -181,11 +180,11 @@ namespace ZTI.Project.Client {
 				sender.Text = line.ToStrings(Stops)[0];
 			}
 
-			lock ( scheduleList_ ) 
+			lock ( scheduleListMutex_ )
 				scheduleList_.Clear();
 
-				IEnumerable<Schedule> schedules = await GetSchedule(line);
-			lock ( scheduleList_ ) {
+			IEnumerable<Schedule> schedules = await GetSchedule(line);
+			lock ( scheduleListMutex_ ) {
 				foreach ( Schedule schedile in schedules )
 					scheduleList_.Add(schedile);
 			}
@@ -209,8 +208,10 @@ namespace ZTI.Project.Client {
 				                             .OrderBy(line => line.num)
 				                             .ThenBy(line => line.dir)
 				                             .Select(line => $"{line.num}{line.dir}")
-				                             .Where(line => line.ToLower().StartsWith(searchBox.Text.Trim().ToLower()) ||
-				                                            line.ToLower().Contains(searchBox.Text.Trim().ToLower()));
+				                             .Where(line => line.ToLowerInvariant()
+				                                                .StartsWith(searchBox.Text.Trim().ToLowerInvariant()) ||
+				                                            line.ToLowerInvariant()
+				                                                .Contains(searchBox.Text.Trim().ToLowerInvariant()));
 			}
 		}
 
@@ -245,13 +246,14 @@ namespace ZTI.Project.Client {
 
 			var responseMsg = await Http.Client.PostAsync(Url.APP + Url.SCHEDULES, content);
 			string response = await responseMsg.Content.ReadAsStringAsync();
-			
+
 			ScheduleLoading.IsActive = false;
 			ScheduleLoading.Visibility = Visibility.Collapsed;
 
 			return Schedule.CreateFromXml(response, Stops, Lines);
 		}
 
+		private readonly object scheduleListMutex_ = new object();
 		private readonly ObservableCollection<Schedule> scheduleList_;
 		private Stop selectedStop_;
 	}

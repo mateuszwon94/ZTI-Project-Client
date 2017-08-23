@@ -35,12 +35,7 @@ namespace ZTI.Project.Client {
 		}
 
 		public static class Url {
-
-#if DEBUG
-			public const string APP = "http://localhost:9081/ZTI-Project/";
-#else
-			public const string APP = "http://IBM-Bluemix-site/ZTI-Project/";
-#endif
+			public const string APP = "http://zti-project-server.eu-gb.mybluemix.net/";
 			public const string STOPS = "Stops";
 			public const string LINES = "Lines";
 			public const string SEARCH_ROUTE = "SearchRoute";

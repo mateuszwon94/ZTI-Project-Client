@@ -39,6 +39,7 @@
         </ScrollViewer>
 
         <RelativePanel Margin="10,10,10,0"
+                       Grid.Column="0"
                        Grid.Row="0">
             <AutoSuggestBox Name="FromStopSearchBox"
                             PlaceholderText="Przystanek poczatkowy"

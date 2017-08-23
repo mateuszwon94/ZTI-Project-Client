@@ -1,32 +1,16 @@
 ﻿using System;
-using System.Net;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Xml;
 using System.Xml.Serialization;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using System.Threading.Tasks;
-using Windows.Devices.Input;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Gaming.Input;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using MetroLog;
-using Microsoft.Toolkit.Uwp;
 using ZTI.Project.Client.Data;
 using static ZTI.Project.Client.Constants;
 using static ZTI.Project.Client.Utils;
@@ -47,7 +31,7 @@ namespace ZTI.Project.Client {
 				if ( Stops != null ) {
 					LoadingIndicator.Visibility = Visibility.Collapsed;
 					MapCanvas.Visibility = Visibility.Visible;
-					if ( sender is DispatcherTimer t ) 
+					if ( sender is DispatcherTimer t )
 						t.Stop();
 				}
 			};
@@ -56,6 +40,7 @@ namespace ZTI.Project.Client {
 
 		private async void GetStops() => Stops = await GetListOfDataFromServer<Stop>(Url.APP + Url.STOPS);
 
+		private readonly object routeMutex_ = new object();
 		public static List<Stop> Stops;
 		public Stop From { get; private set; }
 		public Stop To { get; private set; }
@@ -85,7 +70,7 @@ namespace ZTI.Project.Client {
 #if DEBUG
 				                             $"{stop}\n({stop.ID})",
 #else
-											 stop,
+											 stop.ToString(),
 #endif
 				                             add + stop.X * mul - 30f, stop.Y * mul + 5f,
 				                             stop.NZ ? Colors.DimGray : Colors.Black,
@@ -94,7 +79,7 @@ namespace ZTI.Project.Client {
 				                             });
 			}
 
-			lock ( Route ) {
+			lock ( routeMutex_ ) {
 				if ( Route.Count > 0 ) {
 					Stop currStop = Stops.First(s => s.ID == Route[0].ID);
 					for ( int i = 0 ; i < Route.Count - 1 ; ++i ) {
@@ -120,7 +105,7 @@ namespace ZTI.Project.Client {
 				else if ( sender == ToStopSearchBox )
 					To = null;
 
-				lock (Route)
+				lock ( routeMutex_ )
 					Route.Clear();
 
 				sender.ItemsSource = Stops.Select(stop => stop.Name)
@@ -133,10 +118,14 @@ namespace ZTI.Project.Client {
 		private void StopSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
 			try {
 				if ( sender == FromStopSearchBox ) {
-					From = Stops?.First(stop => stop.Name.Trim().StartsWith(args.QueryText, StringComparison.CurrentCultureIgnoreCase));
+					From = Stops?.First(stop => stop.Name.Trim()
+					                                .StartsWith(args.QueryText != string.Empty ? args.QueryText : (string)args.ChosenSuggestion,
+					                                            StringComparison.CurrentCultureIgnoreCase));
 					if ( From != null ) sender.Text = From?.Name;
 				} else if ( sender == ToStopSearchBox ) {
-					To = Stops?.First(stop => stop.Name.Trim().StartsWith(args.QueryText, StringComparison.CurrentCultureIgnoreCase));
+					To = Stops?.First(stop => stop.Name.Trim()
+					                              .StartsWith(args.QueryText != string.Empty ? args.QueryText : (string)args.ChosenSuggestion,
+					                                          StringComparison.CurrentCultureIgnoreCase));
 					if ( To != null ) sender.Text = To.Name;
 				}
 			} catch ( InvalidOperationException ) {
@@ -155,7 +144,7 @@ namespace ZTI.Project.Client {
 
 		private async void SearchButton_OnClick(object sender, RoutedEventArgs e) {
 			if ( From != null && To != null ) {
-				lock (Route)
+				lock ( routeMutex_ )
 					Route.Clear();
 
 				var stops = new Dictionary<string, string> {
@@ -172,8 +161,8 @@ namespace ZTI.Project.Client {
 				using ( Stream responseStream = new MemoryStream(Encoding.UTF8.GetBytes(response)) ) {
 					XmlSerializer deserializer = new XmlSerializer(typeof(List<Data.Route.Stop>), new XmlRootAttribute(ROUTE));
 
-					List< Data.Route.Stop> list = (List<Data.Route.Stop>)deserializer.Deserialize(responseStream);
-					lock ( Route ) {
+					List<Data.Route.Stop> list = (List<Data.Route.Stop>)deserializer.Deserialize(responseStream);
+					lock ( routeMutex_ ) {
 						foreach ( Data.Route.Stop stop in list )
 							Route.Add(stop);
 					}
