@@ -13,12 +13,7 @@ using ZTI.Project.Client.Data;
 using static ZTI.Project.Client.Constants;
 using static ZTI.Project.Client.Utils;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace ZTI.Project.Client {
-	/// <summary>
-	/// An empty page that can be used on its own or navigated to within a Frame.
-	/// </summary>
 	public sealed partial class LineStopPage : Page {
 		public LineStopPage() {
 			InitializeComponent();
@@ -64,12 +59,7 @@ namespace ZTI.Project.Client {
 
 				args.DrawingSession.FillCircle(add + stop.X * mul, stop.Y * mul, 3f,
 				                               stop.NZ ? Colors.DimGray : Colors.Black);
-				args.DrawingSession.DrawText(
-#if DEBUG
-				                             $"{stop.Name}\n({stop.ID})",
-#else
-											 stop.Name,
-#endif
+				args.DrawingSession.DrawText(stop.Name,
 				                             add + stop.X * mul - 30f, stop.Y * mul + 5f,
 				                             stop.NZ ? Colors.DimGray : Colors.Black,
 				                             new CanvasTextFormat {

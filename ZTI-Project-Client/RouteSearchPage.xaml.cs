@@ -66,12 +66,7 @@ namespace ZTI.Project.Client {
 				else if ( To == stop )
 					args.DrawingSession.DrawCircle(add + stop.X * mul, stop.Y * mul, 10f,
 					                               Colors.Red);
-				args.DrawingSession.DrawText(
-#if DEBUG
-				                             $"{stop}\n({stop.ID})",
-#else
-											 stop.ToString(),
-#endif
+				args.DrawingSession.DrawText(stop.ToString(),
 				                             add + stop.X * mul - 30f, stop.Y * mul + 5f,
 				                             stop.NZ ? Colors.DimGray : Colors.Black,
 				                             new CanvasTextFormat {
