@@ -78,5 +78,11 @@
                    RelativePanel.AlignHorizontalCenterWithPanel="True"
                    RelativePanel.Below="OpiekunTextBlock"
                    Margin="0,5,0,0" />
+        <TextBlock Name="DydejczykTextBlock"
+                   FontSize="20"
+                   Text="dr inż. Antoni Dydejczyk"
+                   RelativePanel.AlignHorizontalCenterWithPanel="True"
+                   RelativePanel.Below="GronekTextBlock"
+                   Margin="0,5,0,0" />
     </RelativePanel>
 </Page>
