@@ -39,7 +39,7 @@ namespace ZTI.Project.Client.Data {
 					if ( currentTime.Hours > lastTime.Hours ) {
 						sb.Append($"\n  {currentTime.Hours}:\t");
 						i = 0;
-					} else if ( i == 6 )
+					} else if ( i == 5 )
 						sb.Append("\n\t");
 
 					sb.Append($"{currentTime.Minutes} ");
@@ -71,7 +71,7 @@ namespace ZTI.Project.Client.Data {
 					if ( currentTime.Hours > lastTime.Hours ) {
 						sb.Append($"\n  {currentTime.Hours}:\t");
 						i = 0;
-					} else if ( i == 6 )
+					} else if ( i == 5 )
 						sb.Append("\n\t");
 
 					sb.Append($"{currentTime.Minutes} ");
