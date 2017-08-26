@@ -89,6 +89,8 @@
 					<!-- lista wyswietlajaca pobrany rozklad jazdy -->
                     <ListView Name="StopListView"
                               ItemsSource="{x:Bind scheduleList_}"
+                              MinWidth="400"
+                              MaxWidth="400"
                               SelectionMode="None">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="data:Schedule">

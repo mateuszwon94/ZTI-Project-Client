@@ -171,12 +171,12 @@ namespace ZTI.Project.Client {
 		/// <param name="sender">Pole wyboru przystanku</param>
 		/// <param name="args">Argumenty eventu</param>
 		private void StopSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) {
-			// Wyczyszczenie wyswietlanego rozkladu
-			lock ( scheduleListMutex_ )
-				scheduleList_.Clear();
-			selectedStop_ = null;
-
 			if ( args.Reason == AutoSuggestionBoxTextChangeReason.UserInput ) {
+				// Wyczyszczenie wyswietlanego rozkladu
+				lock ( scheduleListMutex_ )
+					scheduleList_.Clear();
+				selectedStop_ = null;
+
 				// Wybranie najbardziej pasujacego przystanku
 				sender.ItemsSource = Stops.Select(stop => stop.Name)
 				                          .OrderBy(stopName => stopName)
@@ -232,10 +232,10 @@ namespace ZTI.Project.Client {
 		/// <param name="sender">Pole wyboru linii</param>
 		/// <param name="args">Argumenty eventu</param>
 		private void LineSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) {
-			lock ( scheduleListMutex_ )
-				scheduleList_.Clear();
-
 			if ( args.Reason == AutoSuggestionBoxTextChangeReason.UserInput ) {
+				lock ( scheduleListMutex_ )
+					scheduleList_.Clear();
+
 				sender.ItemsSource = Lines?.SelectMany(line => {
 					                          Stop firstStop = Stops.First(stop => stop.ID == line.Route[0]);
 					                          Stop lastStop = Stops.First(stop => stop.ID == line.Route[line.Route.Length - 1]);

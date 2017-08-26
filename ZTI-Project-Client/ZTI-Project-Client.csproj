@@ -109,6 +109,7 @@
     </Compile>
     <Compile Include="Data\Line.cs" />
     <Compile Include="Data\Log.cs" />
+    <Compile Include="Data\Route\Stop.cs" />
     <Compile Include="Data\Schedule.cs" />
     <Compile Include="LineStopPage.xaml.cs">
       <DependentUpon>LineStopPage.xaml</DependentUpon>
@@ -119,7 +120,6 @@
     <Compile Include="MenuPage.xaml.cs">
       <DependentUpon>MenuPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Data\Route.cs" />
     <Compile Include="RouteSearchPage.xaml.cs">
       <DependentUpon>RouteSearchPage.xaml</DependentUpon>
     </Compile>
