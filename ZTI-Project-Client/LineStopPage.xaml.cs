@@ -14,19 +14,35 @@ using static ZTI.Project.Client.Constants;
 using static ZTI.Project.Client.Utils;
 
 namespace ZTI.Project.Client {
+	/// <inheritdoc cref="Page" />
+	/// <summary>
+	/// Strona z widokiem rozkladu jazd y dla linii i przystanku
+	/// </summary>
 	public sealed partial class LineStopPage : Page {
+
+		#region Konstruktor
+
+		/// <inheritdoc />
+		/// <summary>
+		/// konstruktor
+		/// </summary>
 		public LineStopPage() {
 			InitializeComponent();
+
+			// Pokazanie indykatora ladowania
 			LoadingIndicator.Visibility = Visibility.Visible;
 			LoadingIndicator.IsActive = true;
+
+			// Pobranie przystankow i linii z serwera
 			GetStops();
 			GetLines();
 
+			// Timer, ktory ma sprawdzac czy linie i przystanki zostaly juz pobrane
 			DispatcherTimer timer = new DispatcherTimer {
 				Interval = TimeSpan.FromMilliseconds(100)
 			};
 			timer.Tick += (sender, e) => {
-				if ( Stops != null ) {
+				if ( Stops != null ) { // jesli przystanki sa pobrane ukryj ladowanie i pokaz mape
 					LoadingIndicator.Visibility = Visibility.Collapsed;
 					MapCanvas.Visibility = Visibility.Visible;
 				}
@@ -39,24 +55,86 @@ namespace ZTI.Project.Client {
 			scheduleList_ = new ObservableCollection<Schedule>();
 		}
 
-		private async void GetStops() => Stops = await GetListOfDataFromServer<Stop>(Url.APP + Url.STOPS);
-		private async void GetLines() => Lines = await GetListOfDataFromServer<Line>(Url.APP + Url.LINES);
+		#endregion Konstruktor
 
+		#region Public Variables
+
+		/// <summary>
+		/// lista wszystkich przystankow
+		/// </summary>
 		public static List<Stop> Stops;
+
+		/// <summary>
+		/// lista wszystkich linii
+		/// </summary>
 		public static List<Line> Lines;
 
+		#endregion Public Variables
+
+		#region Private Methods
+
+		/// <summary>
+		/// Asynchroniczna funkcja pobierajaca przystanki serwera
+		/// </summary>
+		private async void GetStops() => Stops = await GetListOfDataFromServer<Stop>(Url.APP + Url.STOPS);
+
+		/// <summary>
+		/// Asynchroniczna funkcja pobierajaca linie z serwera
+		/// </summary>
+		private async void GetLines() => Lines = await GetListOfDataFromServer<Line>(Url.APP + Url.LINES);
+
+		/// <summary>
+		/// Asynchroniczna funkcja zwracajaca rozklad jazdy dla konkretnej linii lub przystanku pobrany z serwera
+		/// </summary>
+		/// <typeparam name="T">Typ dla jakiego szukamy przystanku <see cref="Stop"/> lub <see cref="Line"/></typeparam>
+		/// <param name="val">Linia lub przystanek, dla ktoreg ma byc pobrany rozklad</param>
+		/// <returns>Rozklad</returns>
+		private async Task<IEnumerable<Schedule>> GetSchedule<T>(T val) {
+			ScheduleLoading.Visibility = Visibility.Visible;
+			ScheduleLoading.IsActive = true;
+
+			Dictionary<string, string> args = new Dictionary<string, string>();
+
+			if ( val is Line line ) 
+				args[LINE] = line.Number.ToString();
+			else if ( val is Stop stop )
+				args[STOP] = stop.ID.ToString();
+
+			var content = new FormUrlEncodedContent(args);
+
+			var responseMsg = await Http.Client.PostAsync(Url.APP + Url.SCHEDULES, content);
+			string response = await responseMsg.Content.ReadAsStringAsync();
+
+			ScheduleLoading.IsActive = false;
+			ScheduleLoading.Visibility = Visibility.Collapsed;
+
+			return Schedule.CreateFromXml(response, Stops, Lines);
+		}
+
+		#endregion Private Methods
+
+		#region Event Handlers
+
+		/// <summary>
+		/// Funkcja wywolywana przy rysowaniu na mapie
+		/// </summary>
+		/// <param name="sender">Mapa</param>
+		/// <param name="args">Argument eventu</param>
 		private void MapCanvas_OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args) {
 			const float mul = 5f;
 			const float add = 25f;
 
 			args.DrawingSession.Clear(Colors.White);
 
+			// Rysowanie wszystkich przystankow i polaczen miedzy nimi
 			foreach ( Stop stop in Stops ) {
+				// Rysowanie wszystkich polaczen z obecnego przystanku
 				foreach ( Stop conectedStop in stop.ConnectedStops(Stops) )
 					args.DrawingSession.DrawLine(add + stop.X * mul, stop.Y * mul,
 					                             add + conectedStop.X * mul, conectedStop.Y * mul,
 					                             Colors.Black);
 
+				// Rysowanie przystanku i jego nazwy
 				args.DrawingSession.FillCircle(add + stop.X * mul, stop.Y * mul, 3f,
 				                               stop.NZ ? Colors.DimGray : Colors.Black);
 				args.DrawingSession.DrawText(stop.Name,
@@ -65,6 +143,8 @@ namespace ZTI.Project.Client {
 				                             new CanvasTextFormat {
 					                             FontSize = 15
 				                             });
+
+				// Rysowanie wybranej trasy
 				lock ( scheduleListMutex_ ) {
 					if ( scheduleList_ != null && scheduleList_.Count > 0 && selectedStop_ == null ) {
 
@@ -85,12 +165,19 @@ namespace ZTI.Project.Client {
 			}
 		}
 
+		/// <summary>
+		/// Funkcja wywolywana przy zmianie tekstu w polu wyboru przystnaku
+		/// </summary>
+		/// <param name="sender">Pole wyboru przystanku</param>
+		/// <param name="args">Argumenty eventu</param>
 		private void StopSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) {
+			// Wyczyszczenie wyswietlanego rozkladu
 			lock ( scheduleListMutex_ )
 				scheduleList_.Clear();
 			selectedStop_ = null;
 
 			if ( args.Reason == AutoSuggestionBoxTextChangeReason.UserInput ) {
+				// Wybranie najbardziej pasujacego przystanku
 				sender.ItemsSource = Stops.Select(stop => stop.Name)
 				                          .OrderBy(stopName => stopName)
 				                          .Where(stopName => stopName.ToLowerInvariant()
@@ -100,6 +187,11 @@ namespace ZTI.Project.Client {
 			}
 		}
 
+		/// <summary>
+		/// Funkcja wywoływana przy zatwierdzeniu wyboru w polu przystanku
+		/// </summary>
+		/// <param name="sender">Pole wyboru przystanku</param>
+		/// <param name="args">Argumenty eventu</param>
 		private async void StopSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
 			selectedStop_ =
 				Stops?.First(s => s.Name.Trim()
@@ -118,6 +210,11 @@ namespace ZTI.Project.Client {
 			}
 		}
 
+		/// <summary>
+		/// Funkcja wywolywana przy kliknieciu na pole wyboru przystanku
+		/// </summary>
+		/// <param name="sender">Pole wyboru przystanku</param>
+		/// <param name="e">Argumenty eventu</param>
 		private void StopSearchBox_OnGotFocus(object sender, RoutedEventArgs e) {
 			if ( sender is AutoSuggestBox searchBox ) {
 				searchBox.ItemsSource = Stops?.Select(stop => stop.Name)
@@ -129,6 +226,11 @@ namespace ZTI.Project.Client {
 			}
 		}
 
+		/// <summary>
+		/// Funkcja wywolywana przy zmianie tekstu w polu wyboru linii
+		/// </summary>
+		/// <param name="sender">Pole wyboru linii</param>
+		/// <param name="args">Argumenty eventu</param>
 		private void LineSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) {
 			lock ( scheduleListMutex_ )
 				scheduleList_.Clear();
@@ -156,6 +258,11 @@ namespace ZTI.Project.Client {
 			}
 		}
 
+		/// <summary>
+		/// Funkcja wywoływana przy zatwierdzeniu wyboru w polu linii
+		/// </summary>
+		/// <param name="sender">Pole wyboru linii</param>
+		/// <param name="args">Argumenty eventu</param>
 		private async void LineSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
 			Line line =
 				Lines?.First(l => l.ToStrings(Stops)
@@ -180,6 +287,11 @@ namespace ZTI.Project.Client {
 			}
 		}
 
+		/// <summary>
+		/// Funkcja wywolywana przy kliknieciu na pole wyboru linii
+		/// </summary>
+		/// <param name="sender">Pole wyboru linii</param>
+		/// <param name="e">Argumenty eventu</param>
 		private void LineSearchBox_OnGotFocus(object sender, RoutedEventArgs e) {
 			if ( sender is AutoSuggestBox searchBox ) {
 				searchBox.ItemsSource = Lines?.SelectMany(line => {
@@ -205,46 +317,14 @@ namespace ZTI.Project.Client {
 			}
 		}
 
-		private async Task<IEnumerable<Schedule>> GetSchedule(Line line) {
-			ScheduleLoading.Visibility = Visibility.Visible;
-			ScheduleLoading.IsActive = true;
+		#endregion Event Handlers
 
-			var args = new Dictionary<string, string> {
-				[LINE] = line.Number.ToString(),
-			};
-
-			var content = new FormUrlEncodedContent(args);
-
-			var responseMsg = await Http.Client.PostAsync(Url.APP + Url.SCHEDULES, content);
-			string response = await responseMsg.Content.ReadAsStringAsync();
-
-			ScheduleLoading.IsActive = false;
-			ScheduleLoading.Visibility = Visibility.Collapsed;
-
-			return Schedule.CreateFromXml(response, Stops, Lines);
-		}
-
-		private async Task<IEnumerable<Schedule>> GetSchedule(Stop stop) {
-			ScheduleLoading.Visibility = Visibility.Visible;
-			ScheduleLoading.IsActive = true;
-
-			var args = new Dictionary<string, string> {
-				[STOP] = stop.ID.ToString(),
-			};
-
-			var content = new FormUrlEncodedContent(args);
-
-			var responseMsg = await Http.Client.PostAsync(Url.APP + Url.SCHEDULES, content);
-			string response = await responseMsg.Content.ReadAsStringAsync();
-
-			ScheduleLoading.IsActive = false;
-			ScheduleLoading.Visibility = Visibility.Collapsed;
-
-			return Schedule.CreateFromXml(response, Stops, Lines);
-		}
+		#region Private Variables
 
 		private readonly object scheduleListMutex_ = new object();
 		private readonly ObservableCollection<Schedule> scheduleList_;
 		private Stop selectedStop_;
+
+		#endregion
 	}
 }

@@ -7,7 +7,7 @@
       mc:Ignorable="d">
 
     <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+		<!-- Kolejne teksty strony tytulowej -->
         <TextBlock Name="ZTITextBlock"
                    RelativePanel.AlignHorizontalCenterWithPanel="True"
                    Text="Zaawansowane technologie internetowe"

@@ -15,12 +15,14 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+		<!-- Kontrolka umozliwajaca przesuwanie mapy w wypadku nieodpowiednej rozdzielczosci -->
         <ScrollViewer Grid.Column="1"
                       HorizontalScrollMode="Enabled"
                       HorizontalScrollBarVisibility="Visible"
                       VerticalScrollMode="Enabled"
                       VerticalScrollBarVisibility="Visible">
             <RelativePanel>
+				<!-- Plotno na ktorym rysowana bedzie mapa -->
                 <canvas:CanvasAnimatedControl x:Name="MapCanvas"
                                             VerticalAlignment="Center"
                                             HorizontalAlignment="Center"
@@ -30,7 +32,8 @@
                                             Visibility="Collapsed"
                                             RelativePanel.AlignHorizontalCenterWithPanel="True"
                                             RelativePanel.AlignVerticalCenterWithPanel="True" />
-
+				
+				<!-- Indykator ladowania -->
                 <ProgressRing Name="LoadingIndicator"
                               IsActive="true"
                               RelativePanel.AlignHorizontalCenterWithPanel="True"
@@ -40,6 +43,7 @@
 
         <Grid Grid.Column="0">
             <RelativePanel Margin="10,10,10,10">
+				<!-- Pola wyszukiwania -->
                 <AutoSuggestBox Name="StopSearchBox"
                                 PlaceholderText="Wybierz przystanek"
                                 QueryIcon="Map"
@@ -81,6 +85,8 @@
                               VerticalScrollMode="Enabled"
                               VerticalScrollBarVisibility="Visible"
                               Margin="0,5,10,0">
+					
+					<!-- lista wyswietlajaca pobrany rozklad jazdy -->
                     <ListView Name="StopListView"
                               ItemsSource="{x:Bind scheduleList_}"
                               SelectionMode="None">

@@ -10,6 +10,8 @@
     <ListView Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
               ItemsSource="{x:Bind logs_}"
               SelectionMode="None">
+		
+		<!-- Lista wyświetlająca logi z serwera -->
         <ListView.ItemTemplate>
             <DataTemplate x:DataType="data:Log">
                 <StackPanel Orientation="Horizontal">

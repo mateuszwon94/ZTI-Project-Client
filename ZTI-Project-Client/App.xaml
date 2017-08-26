@@ -3,7 +3,9 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:ZTI.Project.Client"
 			 RequestedTheme="Light">
+	<!-- Wewnetrzne wlasciwosci aplikacji -->
     <Application.Resources>
+		<!-- Czcionka Microsoftu z ikonami -->
         <FontFamily x:Key="SegoeFont">Segoe MDL2 Assets</FontFamily>
     </Application.Resources>
 </Application>

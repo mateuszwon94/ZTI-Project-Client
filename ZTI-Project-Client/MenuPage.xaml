@@ -12,6 +12,8 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+		
+		<!-- Przycisk rozwijajacy hamburger menu -->
         <RelativePanel Grid.Row="0">
             <Button Name="HamburgerButton"
                     FontFamily="{StaticResource SegoeFont}"
@@ -31,10 +33,12 @@
                    OpenPaneLength="350"
                    CompactPaneLength="55">
             <SplitView.Content>
+				<!-- Okno wyswietlajace podglad strony -->
                 <Frame Name="MainFrame" />
             </SplitView.Content>
             <SplitView.Pane>
                 <StackPanel Orientation="Vertical">
+					<!-- Menu -->
                     <ListBox Name="HamburgerListBox"
                              SelectionMode="Single"
                              SelectionChanged="HamburgerListBox_OnSelectionChanged">
@@ -99,6 +103,8 @@
                 </StackPanel>
             </SplitView.Pane>
         </SplitView>
+		
+		<!-- Stopka -->
         <RelativePanel Grid.Row="2"
                        Background="{ThemeResource ButtonBackgroundThemeBrush}">
             <TextBlock FontSize="15"

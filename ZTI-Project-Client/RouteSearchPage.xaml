@@ -6,7 +6,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
-      xmlns:data="using:ZTI.Project.Client.Data.Route"
+      xmlns:route="using:ZTI.Project.Client.Data.Route"
       mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -15,12 +15,14 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+	    <!-- Kontrolka umozliwajaca przesuwanie mapy w wypadku nieodpowiednej rozdzielczosci -->
         <ScrollViewer Grid.Column="1"
                       HorizontalScrollMode="Enabled"
                       HorizontalScrollBarVisibility="Visible"
                       VerticalScrollMode="Enabled"
                       VerticalScrollBarVisibility="Visible">
             <RelativePanel>
+	            <!-- Plotno na ktorym rysowana bedzie mapa -->
                 <canvas:CanvasAnimatedControl Name="MapCanvas"
                                               VerticalAlignment="Center"
                                               HorizontalAlignment="Center"
@@ -31,6 +33,7 @@
                                               RelativePanel.AlignHorizontalCenterWithPanel="True"
                                               RelativePanel.AlignVerticalCenterWithPanel="True" />
 
+	            <!-- Indykator ladowania -->
                 <ProgressRing Name="LoadingIndicator"
                               IsActive="true"
                               RelativePanel.AlignHorizontalCenterWithPanel="True"
@@ -41,6 +44,7 @@
         <RelativePanel Margin="10,10,10,0"
                        Grid.Column="0"
                        Grid.Row="0">
+	        <!-- Pola wyszukiwania -->
             <AutoSuggestBox Name="FromStopSearchBox"
                             PlaceholderText="Przystanek poczatkowy"
                             QueryIcon="Map"
@@ -64,6 +68,7 @@
                             TextChanged="StopSearchBox_TextChanged"
                             QuerySubmitted="StopSearchBox_QuerySubmitted" />
 
+	        <!-- Pola wyboru czasu odjazdu -->
             <TimePicker Name="SearhTimePicker"
                         RelativePanel.Below="FromStopSearchBox"
                         RelativePanel.AlignLeftWith="FromStopSearchBox"
@@ -73,6 +78,7 @@
                         MaxWidth="200"
                         ClockIdentifier="24HourClock" />
 
+			<!-- Przycisk zatwierdzenai wyboru -->
             <Button Name="SearchButton"
                     Margin="5,5,0,0"
                     RelativePanel.Below="ToStopSearchBox"
@@ -90,13 +96,14 @@
                 </StackPanel>
             </Button>
 
+			<!-- Lista wyswietlajaca wygenerowana trase podrozy -->
             <ListView RelativePanel.AlignLeftWithPanel="True"
                       RelativePanel.AlignRightWithPanel="True"
                       RelativePanel.Below="SearchButton"
                       ItemsSource="{x:Bind Route}"
                       SelectionMode="None">
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="data:Stop">
+                    <DataTemplate x:DataType="route:Stop">
                         <TextBlock Text="{x:Bind String}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>

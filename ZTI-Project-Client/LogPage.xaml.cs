@@ -2,11 +2,9 @@
 using Windows.UI.Xaml.Controls;
 using ZTI.Project.Client.Data;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace ZTI.Project.Client {
 	/// <summary>
-	/// An empty page that can be used on its own or navigated to within a Frame.
+	/// Strona wyswietlajaca logowanie
 	/// </summary>
 	public sealed partial class LogPage : Page {
 		public LogPage() {
@@ -15,6 +13,9 @@ namespace ZTI.Project.Client {
 			LoadLogs();
 		}
 
+		/// <summary>
+		/// Funkcja ladujaca logu z serwera
+		/// </summary>
 		private async void LoadLogs() {
 			foreach ( Log log in await Utils.GetListOfLogsFromServer() ) 
 				logs_.Add(log);

@@ -1,6 +1,9 @@
 ﻿using System.Net.Http;
 
 namespace ZTI.Project.Client {
+	/// <summary>
+	/// Klasa zawierajaca wszystkie stale uzywane w programie
+	/// </summary>
 	public static class Constants {
 		public const string STOPS = "stops";
 		public const string STOP = "stop";
@@ -32,10 +35,16 @@ namespace ZTI.Project.Client {
 		public const string FROM = "from";
 		public const string TO = "to";
 
+		/// <summary>
+		/// Klasa zawierajaca klienta Http uzywanego w programie
+		/// </summary>
 		public static class Http {
 			public static readonly HttpClient Client = new HttpClient();
 		}
 
+		/// <summary>
+		/// Klasa zawierajaca linki do servera i nazwy servletow
+		/// </summary>
 		public static class Url {
 			public const string APP = "http://zti-project-server.eu-gb.mybluemix.net/";
 			public const string STOPS = "Stops";

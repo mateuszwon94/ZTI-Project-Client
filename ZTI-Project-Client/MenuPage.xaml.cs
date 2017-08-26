@@ -1,21 +1,29 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-//Szablon elementu Pusta strona jest udokumentowany na stronie https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace ZTI.Project.Client {
 	/// <summary>
-	/// Pusta strona, która może być używana samodzielnie lub do której można nawigować wewnątrz ramki.
+	/// Strona wyswietlajaca widok menu
 	/// </summary>
 	public sealed partial class MenuPage : Page {
 		public MenuPage() { InitializeComponent(); }
 
+		/// <summary>
+		/// Funkcja wywolywana w momencie nacisniecia przycisku hamburger menu. Zwija i rozwija menu
+		/// </summary>
+		/// <param name="sender">Przycisk hamburger menu</param>
+		/// <param name="e">Argumenty eventu</param>
 		private void HamburgerButton_OnClick(object sender, RoutedEventArgs e) =>
 			HamburgerSplitView.IsPaneOpen = !HamburgerSplitView.IsPaneOpen;
 
+		/// <summary>
+		/// Funkcja wywolywana przy wyborze jednego z elementow menu
+		/// </summary>
+		/// <param name="sender">Lista menu</param>
+		/// <param name="e">Argumenty eventu</param>
 		private void HamburgerListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e) {
 			if ( HamburgerSplitView.IsPaneOpen ) HamburgerSplitView.IsPaneOpen = false;
-
+			
 			if ( SearchListBoxItem.IsSelected ) {
 				MainFrame.Navigate(typeof(RouteSearchPage));
 			} else if ( CreditsListBoxItem.IsSelected ) {
