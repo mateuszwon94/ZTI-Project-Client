@@ -23,7 +23,7 @@
                       VerticalScrollBarVisibility="Visible">
             <RelativePanel>
 	            <!-- Plotno na ktorym rysowana bedzie mapa -->
-                <canvas:CanvasAnimatedControl Name="MapCanvas"
+                <canvas:CanvasAnimatedControl x:Name="MapCanvas"
                                               VerticalAlignment="Center"
                                               HorizontalAlignment="Center"
                                               Draw="MapCanvas_OnDraw"
