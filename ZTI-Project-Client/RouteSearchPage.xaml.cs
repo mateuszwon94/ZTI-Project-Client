@@ -181,12 +181,20 @@ namespace ZTI.Project.Client {
 					                                            StringComparison.CurrentCultureIgnoreCase));
 					if ( From != null )
 						sender.Text = From?.Name;
+					if ( ToStopSearchBox.Text == FromStopSearchBox.Text ) {
+						ToStopSearchBox.Text = string.Empty;
+						To = null;
+					}
 				} else if ( sender == ToStopSearchBox ) {
 					To = Stops?.First(stop => stop.Name.Trim()
 					                              .StartsWith(args.QueryText != string.Empty ? args.QueryText : (string)args.ChosenSuggestion,
 					                                          StringComparison.CurrentCultureIgnoreCase));
 					if ( To != null )
 						sender.Text = To.Name;
+					if ( ToStopSearchBox.Text == FromStopSearchBox.Text ) {
+						FromStopSearchBox.Text = string.Empty;
+						From = null;
+					}
 				}
 			} catch ( InvalidOperationException ) {
 				return;
