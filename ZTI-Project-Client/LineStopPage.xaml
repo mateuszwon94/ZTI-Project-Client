@@ -9,21 +9,21 @@
       xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
       mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
 
 		<!-- Kontrolka umozliwajaca przesuwanie mapy w wypadku nieodpowiednej rozdzielczosci -->
-        <ScrollViewer Grid.Column="1"
+		<ScrollViewer Grid.Column="1"
                       HorizontalScrollMode="Enabled"
                       HorizontalScrollBarVisibility="Visible"
                       VerticalScrollMode="Enabled"
                       VerticalScrollBarVisibility="Visible">
-            <RelativePanel>
+			<RelativePanel>
 				<!-- Plotno na ktorym rysowana bedzie mapa -->
-                <canvas:CanvasAnimatedControl x:Name="MapCanvas"
+				<canvas:CanvasAnimatedControl x:Name="MapCanvas"
                                             VerticalAlignment="Center"
                                             HorizontalAlignment="Center"
                                             Draw="MapCanvas_OnDraw"
@@ -32,19 +32,19 @@
                                             Visibility="Collapsed"
                                             RelativePanel.AlignHorizontalCenterWithPanel="True"
                                             RelativePanel.AlignVerticalCenterWithPanel="True" />
-				
+
 				<!-- Indykator ladowania -->
-                <ProgressRing Name="LoadingIndicator"
+				<ProgressRing Name="LoadingIndicator"
                               IsActive="true"
                               RelativePanel.AlignHorizontalCenterWithPanel="True"
                               RelativePanel.AlignVerticalCenterWithPanel="True" />
-            </RelativePanel>
-        </ScrollViewer>
+			</RelativePanel>
+		</ScrollViewer>
 
-        <Grid Grid.Column="0">
-            <RelativePanel Margin="10,10,10,10">
+		<Grid Grid.Column="0">
+			<RelativePanel Margin="10,10,10,10">
 				<!-- Pola wyszukiwania -->
-                <AutoSuggestBox Name="StopSearchBox"
+				<AutoSuggestBox Name="StopSearchBox"
                                 PlaceholderText="Wybierz przystanek"
                                 QueryIcon="Map"
                                 RelativePanel.AlignLeftWithPanel="True"
@@ -56,7 +56,7 @@
                                 TextChanged="StopSearchBox_TextChanged"
                                 QuerySubmitted="StopSearchBox_QuerySubmitted" />
 
-                <AutoSuggestBox Name="LineSearchBox"
+				<AutoSuggestBox Name="LineSearchBox"
                                 PlaceholderText="Wybierz linię"
                                 Margin="5,0,0,0"
                                 QueryIcon="Map"
@@ -69,13 +69,13 @@
                                 TextChanged="LineSearchBox_TextChanged"
                                 QuerySubmitted="LineSearchBox_QuerySubmitted" />
 
-                <ProgressRing Name="ScheduleLoading"
+				<ProgressRing Name="ScheduleLoading"
                               Visibility="Collapsed"
                               RelativePanel.AlignHorizontalCenterWithPanel="true"
                               RelativePanel.Below="LineSearchBox"
                               Margin="0,5,0,0"/>
 
-                <ScrollViewer RelativePanel.AlignLeftWith="StopSearchBox"
+				<ScrollViewer RelativePanel.AlignLeftWith="StopSearchBox"
                               RelativePanel.AlignRightWith="LineSearchBox"
                               RelativePanel.AlignBottomWithPanel="True"
                               RelativePanel.Below="LineSearchBox"
@@ -85,28 +85,28 @@
                               VerticalScrollMode="Enabled"
                               VerticalScrollBarVisibility="Visible"
                               Margin="0,5,10,0">
-					
+
 					<!-- lista wyswietlajaca pobrany rozklad jazdy -->
-                    <ListView Name="StopListView"
+					<ListView Name="StopListView"
                               ItemsSource="{x:Bind scheduleList_}"
                               MinWidth="400"
                               MaxWidth="400"
                               SelectionMode="None">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="data:Schedule">
-                                <controls:Expander Header="{x:Bind HeaderText}"
+						<ListView.ItemTemplate>
+							<DataTemplate x:DataType="data:Schedule">
+								<controls:Expander Header="{x:Bind HeaderText}"
                                                    MinWidth="{Binding ActualWidth, ElementName=ScheduleScrollViewer, Mode=OneWay}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{x:Bind TimesText1}" />
-                                        <TextBlock Text="{x:Bind TimesText2}"
+									<StackPanel Orientation="Horizontal">
+										<TextBlock Text="{x:Bind TimesText1}" />
+										<TextBlock Text="{x:Bind TimesText2}"
                                                    Margin="10,0,0,0" />
-                                    </StackPanel>
-                                </controls:Expander>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </ScrollViewer>
-            </RelativePanel>
-        </Grid>
-    </Grid>
+									</StackPanel>
+								</controls:Expander>
+							</DataTemplate>
+						</ListView.ItemTemplate>
+					</ListView>
+				</ScrollViewer>
+			</RelativePanel>
+		</Grid>
+	</Grid>
 </Page>

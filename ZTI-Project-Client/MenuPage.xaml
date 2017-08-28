@@ -6,16 +6,16 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-		
+	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
 		<!-- Przycisk rozwijajacy hamburger menu -->
-        <RelativePanel Grid.Row="0">
-            <Button Name="HamburgerButton"
+		<RelativePanel Grid.Row="0">
+			<Button Name="HamburgerButton"
                     FontFamily="{StaticResource SegoeFont}"
                     FontSize="30"
                     Content="&#xE700;"
@@ -23,97 +23,97 @@
                     Click="HamburgerButton_OnClick"
                     Width="55"
                     Height="50" />
-            <TextBlock FontSize="30"
+			<TextBlock FontSize="30"
                        Text="Wyszukiwarka połączeń tramwajowych"
                        RelativePanel.AlignHorizontalCenterWithPanel="True" />
-        </RelativePanel>
-        <SplitView Grid.Row="1"
+		</RelativePanel>
+		<SplitView Grid.Row="1"
                    Name="HamburgerSplitView"
                    DisplayMode="CompactOverlay"
                    OpenPaneLength="350"
                    CompactPaneLength="55">
-            <SplitView.Content>
+			<SplitView.Content>
 				<!-- Okno wyswietlajace podglad strony -->
-                <Frame Name="MainFrame" />
-            </SplitView.Content>
-            <SplitView.Pane>
-                <StackPanel Orientation="Vertical">
+				<Frame Name="MainFrame" />
+			</SplitView.Content>
+			<SplitView.Pane>
+				<StackPanel Orientation="Vertical">
 					<!-- Menu -->
-                    <ListBox Name="HamburgerListBox"
+					<ListBox Name="HamburgerListBox"
                              SelectionMode="Single"
                              SelectionChanged="HamburgerListBox_OnSelectionChanged">
-                        <ListBoxItem Name="SearchListBoxItem">
-                            <RelativePanel>
-                                <TextBlock Name="SearchIconTextBlock"
+						<ListBoxItem Name="SearchListBoxItem">
+							<RelativePanel>
+								<TextBlock Name="SearchIconTextBlock"
                                            FontFamily="{StaticResource SegoeFont}"
                                            FontSize="30"
                                            Text="&#xE7C0;"
                                            RelativePanel.AlignLeftWithPanel="True" />
-                                <TextBlock FontSize="25"
+								<TextBlock FontSize="25"
                                            Text="Szukaj połączenia"
                                            RelativePanel.RightOf="SearchIconTextBlock"
                                            RelativePanel.AlignVerticalCenterWithPanel="True"
                                            Margin="20,0,0,0" />
-                            </RelativePanel>
-                        </ListBoxItem>
-                        <ListBoxItem Name="StopListBoxItem">
-                            <RelativePanel>
-                                <TextBlock Name="StopIconTextBlock"
+							</RelativePanel>
+						</ListBoxItem>
+						<ListBoxItem Name="StopListBoxItem">
+							<RelativePanel>
+								<TextBlock Name="StopIconTextBlock"
                                            FontFamily="{StaticResource SegoeFont}"
                                            FontSize="30"
                                            Text="&#xE707;"
                                            RelativePanel.AlignLeftWithPanel="True" />
-                                <TextBlock FontSize="25"
+								<TextBlock FontSize="25"
                                            Text="Rozkład"
                                            RelativePanel.RightOf="StopIconTextBlock"
                                            RelativePanel.AlignVerticalCenterWithPanel="True"
                                            Margin="20,0,0,0" />
-                            </RelativePanel>
-                        </ListBoxItem>
-                        <ListBoxItem Name="LogsListBoxItem">
-                            <RelativePanel>
-                                <TextBlock Name="LogsIconTextBlock"
+							</RelativePanel>
+						</ListBoxItem>
+						<ListBoxItem Name="LogsListBoxItem">
+							<RelativePanel>
+								<TextBlock Name="LogsIconTextBlock"
                                            FontFamily="{StaticResource SegoeFont}"
                                            FontSize="30"
                                            Text="&#xEE92;"
                                            RelativePanel.AlignLeftWithPanel="True" />
-                                <TextBlock FontSize="25"
+								<TextBlock FontSize="25"
                                            Text="Zobacz logi"
                                            RelativePanel.RightOf="LogsIconTextBlock"
                                            RelativePanel.AlignVerticalCenterWithPanel="True"
                                            Margin="20,0,0,0" />
-                            </RelativePanel>
-                        </ListBoxItem>
-                        <ListBoxItem Name="CreditsListBoxItem"
+							</RelativePanel>
+						</ListBoxItem>
+						<ListBoxItem Name="CreditsListBoxItem"
                                      IsSelected="True">
-                            <RelativePanel>
-                                <TextBlock Name="CreditsIconTextBlock"
+							<RelativePanel>
+								<TextBlock Name="CreditsIconTextBlock"
                                            FontFamily="{StaticResource SegoeFont}"
                                            FontSize="30"
                                            Text="&#xE8A4;"
                                            RelativePanel.AlignLeftWithPanel="True" />
-                                <TextBlock FontSize="25"
+								<TextBlock FontSize="25"
                                            Text="O aplikacji"
                                            RelativePanel.RightOf="CreditsIconTextBlock"
                                            RelativePanel.AlignVerticalCenterWithPanel="True"
                                            Margin="20,0,0,0" />
-                            </RelativePanel>
-                        </ListBoxItem>
-                    </ListBox>
-                </StackPanel>
-            </SplitView.Pane>
-        </SplitView>
-		
+							</RelativePanel>
+						</ListBoxItem>
+					</ListBox>
+				</StackPanel>
+			</SplitView.Pane>
+		</SplitView>
+
 		<!-- Stopka -->
-        <RelativePanel Grid.Row="2"
+		<RelativePanel Grid.Row="2"
                        Background="{ThemeResource ButtonBackgroundThemeBrush}">
-            <TextBlock FontSize="15"
+			<TextBlock FontSize="15"
                        Margin="5,0,0,0"
                        Text="Mateusz Winiarski &#x24B8;"
                        RelativePanel.AlignLeftWithPanel="True" />
-            <TextBlock FontSize="15"
+			<TextBlock FontSize="15"
                        Text="ZTI - Projekt - Klient"
                        RelativePanel.AlignHorizontalCenterWithPanel="True" />
-        </RelativePanel>
-    </Grid>
+		</RelativePanel>
+	</Grid>
 </Page>
