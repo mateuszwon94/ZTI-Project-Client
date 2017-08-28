@@ -43,6 +43,22 @@ namespace ZTI.Project.Client.Data.Route {
 			$"odjazd o {TimeString} " +
 			$"z przystanku {RouteSearchPage.Stops.First(s => s.ID == ID).Name} ";
 
+		public override bool Equals(object obj) {
+			if ( obj == null ) return false;
+			if ( ReferenceEquals(obj, this) ) return true;
+			if ( obj is Stop other ) return ID == other.ID && Line == other.Line && Time == other.Time;
+			return false;
+		}
+
+		public static bool operator ==(Stop one, Stop two) {
+			if ( one is null || two is null ) return false;
+			return one.Equals(two);
+		}
+
+		public static bool operator !=(Stop one, Stop two) {
+			if ( one is null || two is null ) return true;
+			return !one.Equals(two);
+		}
 	}
 }
 

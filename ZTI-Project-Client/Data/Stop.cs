@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Reflection.Metadata;
 using System.Xml.Serialization;
 
 namespace ZTI.Project.Client.Data {
@@ -73,5 +72,22 @@ namespace ZTI.Project.Client.Data {
 		/// <returns>Lista sasiadujacych przystankow</returns>
 		public IEnumerable<Stop> ConnectedStops(IEnumerable<Stop> allStops)
 			=> allStops.Where(stop => Conns.Any(id => id == stop.ID));
+
+		public override bool Equals(object obj) {
+			if ( obj == null ) return false;
+			if ( ReferenceEquals(obj, this) ) return true;
+			if ( obj is Data.Stop other ) return ID == other.ID;
+			return false;
+		}
+
+		public static bool operator ==(Stop one, Stop two) {
+			if ( one is null || two is null ) return false;
+			return one.Equals(two);
+		}
+
+		public static bool operator !=(Stop one, Stop two) {
+			if ( one is null || two is null ) return true;
+			return !one.Equals(two);
+		}
 	}
 }

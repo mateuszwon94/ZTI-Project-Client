@@ -95,5 +95,22 @@ namespace ZTI.Project.Client.Data {
 
 			return $"{Number} {firstStop} <-> {lastStop}";
 		}
+
+		public override bool Equals(object obj) {
+			if ( obj == null ) return false;
+			if ( ReferenceEquals(obj, this) ) return true;
+			if ( obj is Line other ) return Number == other.Number;
+			return false;
+		}
+
+		public static bool operator ==(Line one, Line two) {
+			if ( one is null || two is null ) return false;
+			return one.Equals(two);
+		}
+
+		public static bool operator !=(Line one, Line two) {
+			if ( one is null || two is null ) return true;
+			return !one.Equals(two);
+		}
 	}
 }

@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.0
+VisualStudioVersion = 15.0.26823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZTI-Project-Client", "ZTI-Project-Client\ZTI-Project-Client.csproj", "{1980E18C-798C-4464-BE5C-D306B78BCB6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZTI-Project-Client-Test", "ZTI-Project-Client-Test\ZTI-Project-Client-Test.csproj", "{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,24 @@ Global
 		{1980E18C-798C-4464-BE5C-D306B78BCB6A}.Release|x86.ActiveCfg = Release|x86
 		{1980E18C-798C-4464-BE5C-D306B78BCB6A}.Release|x86.Build.0 = Release|x86
 		{1980E18C-798C-4464-BE5C-D306B78BCB6A}.Release|x86.Deploy.0 = Release|x86
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Debug|ARM.ActiveCfg = Debug|ARM
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Debug|ARM.Build.0 = Debug|ARM
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Debug|ARM.Deploy.0 = Debug|ARM
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Debug|x64.ActiveCfg = Debug|x64
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Debug|x64.Build.0 = Debug|x64
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Debug|x64.Deploy.0 = Debug|x64
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Debug|x86.ActiveCfg = Debug|x86
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Debug|x86.Build.0 = Debug|x86
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Debug|x86.Deploy.0 = Debug|x86
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Release|ARM.ActiveCfg = Release|ARM
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Release|ARM.Build.0 = Release|ARM
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Release|ARM.Deploy.0 = Release|ARM
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Release|x64.ActiveCfg = Release|x64
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Release|x64.Build.0 = Release|x64
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Release|x64.Deploy.0 = Release|x64
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Release|x86.ActiveCfg = Release|x86
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Release|x86.Build.0 = Release|x86
+		{EE5D16F7-76BD-4F10-86C1-BE7DFAF06BEE}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

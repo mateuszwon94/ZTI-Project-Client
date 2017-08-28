@@ -17,6 +17,28 @@ namespace ZTI.Project.Client.Data {
 
 		public Dictionary<string, List<TimeSpan>> Times { get; set; }
 
+		public override bool Equals(object obj) {
+			if ( obj == null ) return false;
+			if ( ReferenceEquals(obj, this) ) return true;
+			if ( obj is Schedule other ) {
+				if ( Stop != other.Stop ||
+				     Line != other.Line ) return false;
+
+				foreach ( string key in Times.Keys ) {
+					if ( !other.Times.Keys.Contains(key) ) return false;
+					if ( Times[key].Count != other.Times[key].Count ) return false;
+
+
+					for ( int i = 0 ; i < Times[key].Count; ++i ) 
+						if ( Times[key][i] != other.Times[key][i] ) return false;
+				}
+
+				return true;
+			}
+
+			return false;
+		}
+
 		public string HeaderText => $"{Stop.Name} - {Line.Number}";
 
 		public string TimesText1 {
@@ -87,7 +109,7 @@ namespace ZTI.Project.Client.Data {
 			}
 		}
 
-		public static IEnumerable<Schedule> CreateFromXml(string xml, List<Stop> allStops, List<Line> allLines) {
+		public static List<Schedule> CreateFromXml(string xml, List<Stop> allStops, List<Line> allLines) {
 			List<Schedule> schedules = new List<Schedule>();
 
 			XmlDocument document = new XmlDocument();
@@ -106,7 +128,7 @@ namespace ZTI.Project.Client.Data {
 					schedule.Times[timesNode.Attributes[VARIANT].Value] = new List<TimeSpan>();
 
 					foreach ( XmlNode timeNode in timesNode.ChildNodes ) 
-						schedule.Times[timesNode.Attributes[VARIANT].Value].Add(TimeSpan.Parse(timeNode.InnerText));
+						schedule.Times[timesNode.Attributes[VARIANT].Value].Add(TimeSpan.Parse(timeNode.InnerText.Trim()));
 				}
 
 				schedules.Add(schedule);
